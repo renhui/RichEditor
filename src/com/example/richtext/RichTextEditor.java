@@ -3,7 +3,9 @@ package com.example.richtext;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.stone.richeditor.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.LoadedFrom;
 
 import android.animation.LayoutTransition;
 import android.animation.LayoutTransition.TransitionListener;
@@ -26,6 +28,7 @@ import android.widget.ScrollView;
 
 /**
  * 这是一个富文本编辑器，给外部提供insertImage接口，添加的图片跟当前光标所在位置有关
+ * 
  * @author RenHui
  * 
  */
@@ -62,8 +65,7 @@ public class RichTextEditor extends ScrollView {
 		allLayout.setOrientation(LinearLayout.VERTICAL);
 		allLayout.setBackgroundColor(Color.WHITE);
 		setupLayoutTransitions();
-		LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT);
+		LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		addView(allLayout, layoutParams);
 
 		// 2. 初始化键盘退格监听
@@ -101,11 +103,9 @@ public class RichTextEditor extends ScrollView {
 			}
 		};
 
-		LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		editNormalPadding = dip2px(EDIT_PADDING);
-		EditText firstEdit = createEditText("input here",
-				dip2px(EDIT_FIRST_PADDING_TOP));
+		EditText firstEdit = createEditText("input here", dip2px(EDIT_FIRST_PADDING_TOP));
 		allLayout.addView(firstEdit, firstEditParam);
 		lastFocusEdit = firstEdit;
 	}
@@ -166,8 +166,7 @@ public class RichTextEditor extends ScrollView {
 	 * 生成文本输入框
 	 */
 	private EditText createEditText(String hint, int paddingTop) {
-		EditText editText = (EditText) inflater.inflate(R.layout.edit_item1,
-				null);
+		EditText editText = (EditText) inflater.inflate(R.layout.edit_item1, null);
 		editText.setOnKeyListener(keyListener);
 		editText.setTag(viewTagIndex++);
 		editText.setPadding(editNormalPadding, paddingTop, editNormalPadding, 0);
@@ -215,8 +214,7 @@ public class RichTextEditor extends ScrollView {
 			// 如果EditText非空且光标不在最顶端，则需要添加新的imageView和EditText
 			lastFocusEdit.setText(editStr1);
 			String editStr2 = lastEditStr.substring(cursorIndex).trim();
-			if (allLayout.getChildCount() - 1 == lastEditIndex
-					|| editStr2.length() > 0) {
+			if (allLayout.getChildCount() - 1 == lastEditIndex || editStr2.length() > 0) {
 				addEditTextAtIndex(lastEditIndex + 1, editStr2);
 			}
 
@@ -258,19 +256,22 @@ public class RichTextEditor extends ScrollView {
 	/**
 	 * 在特定位置添加ImageView
 	 */
-	private void addImageViewAtIndex(final int index, Bitmap bmp,
-			String imagePath) {
+	private void addImageViewAtIndex(final int index, Bitmap bmp, String imagePath) {
 		final RelativeLayout imageLayout = createImageLayout();
-		DataImageView imageView = (DataImageView) imageLayout
-				.findViewById(R.id.edit_imageView);
-		imageView.setImageBitmap(bmp);
+		DataImageView imageView = (DataImageView) imageLayout.findViewById(R.id.edit_imageView);
+		// imageView.setImageBitmap(bmp);
 		imageView.setBitmap(bmp);
 		imageView.setAbsolutePath(imagePath);
+		Log.e("111", "路径：" + imagePath);
+		// ImageLoader.getInstance().displayImage("file://" + imagePath, imageView);
+		DisplayImageOptions dio = new DisplayImageOptions.Builder().cacheOnDisk(true).build();
+		ImageLoader.getInstance().displayImage("http://www.it165.net/uploadfile/files/2014/0910/20140910210212143.png", imageView, dio);
+//		ImageLoader.getInstance().displayImage("file://" + imagePath, imageView, dio);
 
 		// 调整imageView的高度
 		int imageHeight = getWidth() * bmp.getHeight() / bmp.getWidth();
-		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, imageHeight);
+		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, imageHeight);
+//		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		imageView.setLayoutParams(lp);
 
 		// onActivityResult无法触发动画，此处post处理
@@ -292,8 +293,7 @@ public class RichTextEditor extends ScrollView {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(filePath, options);
-		int sampleSize = options.outWidth > width ? options.outWidth / width
-				+ 1 : 1;
+		int sampleSize = options.outWidth > width ? options.outWidth / width + 1 : 1;
 		options.inJustDecodeBounds = false;
 		options.inSampleSize = sampleSize;
 		return BitmapFactory.decodeFile(filePath, options);
@@ -308,18 +308,15 @@ public class RichTextEditor extends ScrollView {
 		mTransitioner.addTransitionListener(new TransitionListener() {
 
 			@Override
-			public void startTransition(LayoutTransition transition,
-					ViewGroup container, View view, int transitionType) {
+			public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
 
 			}
 
 			@Override
-			public void endTransition(LayoutTransition transition,
-					ViewGroup container, View view, int transitionType) {
-				if (!transition.isRunning()
-						&& transitionType == LayoutTransition.CHANGE_DISAPPEARING) {
+			public void endTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
+				if (!transition.isRunning() && transitionType == LayoutTransition.CHANGE_DISAPPEARING) {
 					// transition动画结束，合并EditText
-					// mergeEditText();
+					 mergeEditText();
 				}
 			}
 		});
@@ -332,8 +329,7 @@ public class RichTextEditor extends ScrollView {
 	private void mergeEditText() {
 		View preView = allLayout.getChildAt(disappearingImageIndex - 1);
 		View nextView = allLayout.getChildAt(disappearingImageIndex);
-		if (preView != null && preView instanceof EditText && null != nextView
-				&& nextView instanceof EditText) {
+		if (preView != null && preView instanceof EditText && null != nextView && nextView instanceof EditText) {
 			Log.d("LeiTest", "合并EditText");
 			EditText preEdit = (EditText) preView;
 			EditText nextEdit = (EditText) nextView;
@@ -380,8 +376,7 @@ public class RichTextEditor extends ScrollView {
 				EditText item = (EditText) itemView;
 				itemData.inputStr = item.getText().toString();
 			} else if (itemView instanceof RelativeLayout) {
-				DataImageView item = (DataImageView) itemView
-						.findViewById(R.id.edit_imageView);
+				DataImageView item = (DataImageView) itemView.findViewById(R.id.edit_imageView);
 				itemData.imagePath = item.getAbsolutePath();
 				itemData.bitmap = item.getBitmap();
 			}

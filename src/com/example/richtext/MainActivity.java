@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.example.richtext.RichTextEditor.EditData;
-import com.stone.richeditor.R;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
@@ -26,6 +27,7 @@ import android.view.Window;
 
 /**
  * 主Activity入口
+ * 
  * @author RenHui
  * 
  */
@@ -46,6 +48,10 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
+		
+		// 初始化图片加载控件
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+		ImageLoader.getInstance().init(config);
 
 		editor = (RichTextEditor) findViewById(R.id.richEditor);
 		btnListener = new View.OnClickListener() {
@@ -82,14 +88,17 @@ public class MainActivity extends FragmentActivity {
 	 * 负责处理编辑数据提交等事宜，请自行实现
 	 */
 	protected void dealEditData(List<EditData> editList) {
+		String data = "";
 		for (EditData itemData : editList) {
 			if (itemData.inputStr != null) {
+				data += itemData.inputStr;
 				Log.d("RichEditor", "commit inputStr=" + itemData.inputStr);
 			} else if (itemData.imagePath != null) {
+				data += itemData.imagePath;
 				Log.d("RichEditor", "commit imgePath=" + itemData.imagePath);
 			}
-
 		}
+		Log.e("111", data);
 	}
 
 	protected void openCamera() {
