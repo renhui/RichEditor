@@ -114,7 +114,7 @@ public class RichTextEditor extends ScrollView {
 	 * 处理软键盘backSpace回退事件
 	 * 
 	 * @param editTxt
-	 *            光标所在的文本输入框
+	 * 光标所在的文本输入框
 	 */
 	private void onBackspacePress(EditText editTxt) {
 		int startSelection = editTxt.getSelectionStart();
@@ -166,7 +166,7 @@ public class RichTextEditor extends ScrollView {
 	 * 生成文本输入框
 	 */
 	private EditText createEditText(String hint, int paddingTop) {
-		EditText editText = (EditText) inflater.inflate(R.layout.edit_item1, null);
+		EditText editText = (EditText) inflater.inflate(R.layout.editor_item, null);
 		editText.setOnKeyListener(keyListener);
 		editText.setTag(viewTagIndex++);
 		editText.setPadding(editNormalPadding, paddingTop, editNormalPadding, 0);
@@ -263,9 +263,9 @@ public class RichTextEditor extends ScrollView {
 		imageView.setBitmap(bmp);
 		imageView.setAbsolutePath(imagePath);
 		Log.e("111", "路径：" + imagePath);
-		// ImageLoader.getInstance().displayImage("file://" + imagePath, imageView);
+		 ImageLoader.getInstance().displayImage("file://" + imagePath, imageView);
 		DisplayImageOptions dio = new DisplayImageOptions.Builder().cacheOnDisk(true).build();
-		ImageLoader.getInstance().displayImage("http://www.it165.net/uploadfile/files/2014/0910/20140910210212143.png", imageView, dio);
+//		ImageLoader.getInstance().displayImage("http://www.it165.net/uploadfile/files/2014/0910/20140910210212143.png", imageView, dio);
 //		ImageLoader.getInstance().displayImage("file://" + imagePath, imageView, dio);
 
 		// 调整imageView的高度
@@ -382,7 +382,7 @@ public class RichTextEditor extends ScrollView {
 			}
 			dataList.add(itemData);
 		}
-
+		
 		return dataList;
 	}
 

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.richtext.DeletableEditText xmlns:android="http://schemas.android.com/apk/res/android"
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
     android:cursorVisible="true"
+    android:hint="inpu here"
     android:lineSpacingExtra="10dp"
     android:textColor="#444"
     android:textCursorDrawable="@drawable/cursor_shape" >
 
-</com.example.richtext.DeletableEditText>
+</EditText>
