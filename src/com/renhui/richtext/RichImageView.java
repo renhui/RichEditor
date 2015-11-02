@@ -1,4 +1,4 @@
-package com.lengsf.richtext;
+package com.renhui.richtext;
 
 import android.content.Context;
 import android.util.AttributeSet;

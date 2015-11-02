@@ -5,9 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import com.example.richtext.RichTextEditor.EditData;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.renhui.richtext.EditData;
+import com.renhui.richtext.RichEditor;
 
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
@@ -35,7 +36,7 @@ import android.view.Window;
 public class MainActivity extends FragmentActivity {
 	private static final int REQUEST_CODE_PICK_IMAGE = 1023;
 	private static final int REQUEST_CODE_CAPTURE_CAMEIA = 1022;
-	private RichTextEditor editor;
+	private RichEditor editor;
 	private View btn1, btn2, btn3;
 	private OnClickListener btnListener;
 
@@ -53,7 +54,7 @@ public class MainActivity extends FragmentActivity {
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
 		ImageLoader.getInstance().init(config);
 
-		editor = (RichTextEditor) findViewById(R.id.richEditor);
+		editor = (RichEditor) findViewById(R.id.richEditor);
 		btnListener = new View.OnClickListener() {
 
 			@Override
