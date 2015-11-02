@@ -49,9 +49,10 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
-		
+
 		// 初始化图片加载控件
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+				this).build();
 		ImageLoader.getInstance().init(config);
 
 		editor = (RichEditor) findViewById(R.id.richEditor);

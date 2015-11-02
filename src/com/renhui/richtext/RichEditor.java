@@ -2,12 +2,11 @@ package com.renhui.richtext;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.example.richtext.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
-
 import android.animation.LayoutTransition;
 import android.animation.LayoutTransition.TransitionListener;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -109,6 +108,7 @@ public class RichEditor extends ScrollView {
 	}
 	
 	/** 创建文本输入框   */
+	@SuppressLint("InflateParams")
 	private EditText createEditText(String hint, int paddingTop) {
 		EditText editText = (EditText) mInflater.inflate(R.layout.editor_item, null);
 		editText.setOnKeyListener(mKeyListener);
@@ -120,6 +120,7 @@ public class RichEditor extends ScrollView {
 	}
 	
 	// 创建图片显示的view
+	@SuppressLint("InflateParams")
 	private RelativeLayout createImageLayout() {
 		RelativeLayout layout = (RelativeLayout) mInflater.inflate(R.layout.edit_imageview, null);
 		layout.setTag(viewTagIndex++);
