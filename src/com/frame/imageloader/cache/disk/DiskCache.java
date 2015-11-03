@@ -1,4 +1,4 @@
-package com.renhui.imageloader.cache.disk;
+package com.frame.imageloader.cache.disk;
 
 import java.io.File;
 import java.io.IOException;
