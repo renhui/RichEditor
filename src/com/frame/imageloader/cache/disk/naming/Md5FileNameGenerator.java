@@ -48,5 +48,4 @@ public class Md5FileNameGenerator implements FileNameGenerator {
 	 }
 	 byte[] digest = digester.digest();
 	 */
-
 }
