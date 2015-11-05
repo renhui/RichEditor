@@ -19,6 +19,9 @@ public class ImageViewAware extends ViewAware {
 		}
 	}
 
+	/**
+	 * 将Bitmap加载到图片上
+	 */
 	@Override
 	protected void setImageBitmapInto(Bitmap bitmap, View view) {
 		((ImageView) view).setImageBitmap(bitmap);
