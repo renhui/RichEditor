@@ -1,4 +1,4 @@
-package com.frame.imageloader.core;
+package com.frame.imageloader.core.assist;
 
 /**
  * 图片加载源

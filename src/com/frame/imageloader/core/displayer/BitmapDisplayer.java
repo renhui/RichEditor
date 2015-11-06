@@ -2,7 +2,7 @@ package com.frame.imageloader.core.displayer;
 
 import android.graphics.Bitmap;
 
-import com.frame.imageloader.core.LoadedFrom;
+import com.frame.imageloader.core.assist.LoadedFrom;
 import com.frame.imageloader.core.imageaware.ImageAware;
 
 /**
