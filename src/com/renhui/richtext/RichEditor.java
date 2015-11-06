@@ -2,8 +2,10 @@ package com.renhui.richtext;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.example.richtext.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.frame.imageloader.core.ImageLoader;
+
 import android.animation.LayoutTransition;
 import android.animation.LayoutTransition.TransitionListener;
 import android.annotation.SuppressLint;

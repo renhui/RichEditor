@@ -1,9 +1,19 @@
+/*******************************************************************************
+ * Copyright 2013-2014 Sergey Tarasevich
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package com.frame.imageloader.core.imageaware;
-
-
-import java.lang.reflect.Field;
-
-import com.frame.imageloader.core.assist.ViewScaleType;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
@@ -11,15 +21,56 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.frame.imageloader.core.assist.ViewScaleType;
+import com.frame.imageloader.utils.L;
+
+import java.lang.reflect.Field;
+
+/**
+ * Wrapper for Android {@link android.widget.ImageView ImageView}. Keeps weak reference of ImageView to prevent memory
+ * leaks.
+ *
+ * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
+ * @since 1.9.0
+ */
 public class ImageViewAware extends ViewAware {
+
+	/**
+	 * Constructor. <br />
+	 * References {@link #ImageViewAware(android.widget.ImageView, boolean) ImageViewAware(imageView, true)}.
+	 *
+	 * @param imageView {@link android.widget.ImageView ImageView} to work with
+	 */
 	public ImageViewAware(ImageView imageView) {
 		super(imageView);
 	}
-	
+
+	/**
+	 * Constructor
+	 *
+	 * @param imageView           {@link android.widget.ImageView ImageView} to work with
+	 * @param checkActualViewSize <b>true</b> - then {@link #getWidth()} and {@link #getHeight()} will check actual
+	 *                            size of ImageView. It can cause known issues like
+	 *                            <a href="https://github.com/nostra13/Android-Universal-Image-Loader/issues/376">this</a>.
+	 *                            But it helps to save memory because memory cache keeps bitmaps of actual (less in
+	 *                            general) size.
+	 *                            <p/>
+	 *                            <b>false</b> - then {@link #getWidth()} and {@link #getHeight()} will <b>NOT</b>
+	 *                            consider actual size of ImageView, just layout parameters. <br /> If you set 'false'
+	 *                            it's recommended 'android:layout_width' and 'android:layout_height' (or
+	 *                            'android:maxWidth' and 'android:maxHeight') are set with concrete values. It helps to
+	 *                            save memory.
+	 *                            <p/>
+	 */
 	public ImageViewAware(ImageView imageView, boolean checkActualViewSize) {
 		super(imageView, checkActualViewSize);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 * <br />
+	 * 3) Get <b>maxWidth</b>.
+	 */
 	@Override
 	public int getWidth() {
 		int width = super.getWidth();
@@ -32,7 +83,11 @@ public class ImageViewAware extends ViewAware {
 		return width;
 	}
 
-	
+	/**
+	 * {@inheritDoc}
+	 * <br />
+	 * 3) Get <b>maxHeight</b>
+	 */
 	@Override
 	public int getHeight() {
 		int height = super.getHeight();
@@ -44,7 +99,7 @@ public class ImageViewAware extends ViewAware {
 		}
 		return height;
 	}
-	
+
 	@Override
 	public ViewScaleType getScaleType() {
 		ImageView imageView = (ImageView) viewRef.get();
@@ -54,15 +109,11 @@ public class ImageViewAware extends ViewAware {
 		return super.getScaleType();
 	}
 
-	
+	@Override
 	public ImageView getWrappedView() {
 		return (ImageView) super.getWrappedView();
 	}
-	
-	/**
-	 * 将Drawable加载到View上面. 需要保证view不能为空
-	 * 此方法必须在UI线程调用.
-	 */
+
 	@Override
 	protected void setImageDrawableInto(Drawable drawable, View view) {
 		((ImageView) view).setImageDrawable(drawable);
@@ -71,15 +122,11 @@ public class ImageViewAware extends ViewAware {
 		}
 	}
 
-	/**
-	 * 将Bitmap加载到View上面. 需要保证view不能为空
-	 * 此方法必须在UI线程调用.
-	 */
 	@Override
 	protected void setImageBitmapInto(Bitmap bitmap, View view) {
 		((ImageView) view).setImageBitmap(bitmap);
 	}
-	
+
 	private static int getImageViewFieldValue(Object object, String fieldName) {
 		int value = 0;
 		try {
@@ -90,7 +137,7 @@ public class ImageViewAware extends ViewAware {
 				value = fieldValue;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			L.e(e);
 		}
 		return value;
 	}

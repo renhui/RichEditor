@@ -1,5 +1,6 @@
 package com.frame.imageloader.core.assist;
 
+
 /**
  * 列举图片加载和显示失败的原因
  * @author renhui
@@ -38,7 +39,7 @@ public class FailReason {
 		OUT_OF_MEMORY,
 		
 		/** 在加载图片时发生未知错误*/
-		UMKNOWN
+		UNKNOWN
 	}
 
 }

@@ -1,22 +1,60 @@
+/*******************************************************************************
+ * Copyright 2011-2014 Sergey Tarasevich
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package com.frame.imageloader.core;
 
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.widget.ImageView;
 
-/***
- * 操作Bitmap和展示图片的任务
- * 主要进行的操作是处理图片的{@link Bitmap}并将图片展示到{@link ImageView}上面,使用DispalyBitmapTask
- * @author renhui
+import com.frame.imageloader.core.assist.LoadedFrom;
+import com.frame.imageloader.core.process.BitmapProcessor;
+import com.frame.imageloader.utils.L;
+
+/**
+ * Presents process'n'display image task. Processes image {@linkplain Bitmap} and display it in {@link ImageView} using
+ * {@link DisplayBitmapTask}.
+ *
+ * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
+ * @since 1.8.0
  */
-public class ProcessAndDisplayImageTask implements Runnable {
-	
+final class ProcessAndDisplayImageTask implements Runnable {
+
 	private static final String LOG_POSTPROCESS_IMAGE = "PostProcess image before displaying [%s]";
-	
+
+	private final ImageLoaderEngine engine;
+	private final Bitmap bitmap;
+	private final ImageLoadingInfo imageLoadingInfo;
+	private final Handler handler;
+
+	public ProcessAndDisplayImageTask(ImageLoaderEngine engine, Bitmap bitmap, ImageLoadingInfo imageLoadingInfo,
+			Handler handler) {
+		this.engine = engine;
+		this.bitmap = bitmap;
+		this.imageLoadingInfo = imageLoadingInfo;
+		this.handler = handler;
+	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
+		L.d(LOG_POSTPROCESS_IMAGE, imageLoadingInfo.memoryCacheKey);
 
+		BitmapProcessor processor = imageLoadingInfo.options.getPostProcessor();
+		Bitmap processedBitmap = processor.process(bitmap);
+		DisplayBitmapTask displayBitmapTask = new DisplayBitmapTask(processedBitmap, imageLoadingInfo, engine,
+				LoadedFrom.MEMORY_CACHE);
+		LoadAndDisplayImageTask.runTask(displayBitmapTask, imageLoadingInfo.options.isSyncLoading(), handler, engine);
+	}
 }

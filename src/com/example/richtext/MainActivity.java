@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.frame.imageloader.core.ImageLoader;
+import com.frame.imageloader.core.ImageLoaderConfiguration;
 import com.renhui.richtext.EditData;
 import com.renhui.richtext.RichEditor;
 

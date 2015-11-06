@@ -1,9 +1,10 @@
 package com.frame.imageloader.core.listener;
 
+import com.frame.imageloader.core.assist.FailReason;
+
 import android.graphics.Bitmap;
 import android.view.View;
 
-import com.frame.imageloader.core.assist.FailReason;
 
 /**
  * 图片加载进程监听
