@@ -1,46 +1,42 @@
-/*******************************************************************************
- * Copyright 2011-2014 Sergey Tarasevich
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package com.nostra13.universalimageloader.utils;
-
-import com.nostra13.universalimageloader.cache.disc.DiskCache;
 
 import java.io.File;
 
+import com.nostra13.universalimageloader.cache.disc.DiskCache;
+
+
+
 /**
- * Utility for convenient work with disk cache.<br />
- * <b>NOTE:</b> This utility works with file system so avoid using it on application main thread.
- *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
- * @since 1.8.0
+ * 图片磁盘缓存工具类
+ * 
+ * @author renhui
  */
 public final class DiskCacheUtils {
 
+	/**
+	 * 私有构造函数
+	 */
 	private DiskCacheUtils() {
 	}
 
-	/** Returns {@link File} of cached image or <b>null</b> if image was not cached in disk cache */
+	
+	/**
+	 * 查找缓存中的图片
+	 * @param imageUri
+	 * @param diskCache
+	 * @return 如果已经缓存了,则返回获取到的缓存,如果从没缓存过就返回null
+	 */
 	public static File findInCache(String imageUri, DiskCache diskCache) {
 		File image = diskCache.get(imageUri);
 		return image != null && image.exists() ? image : null;
 	}
-
+	
+	
 	/**
-	 * Removed cached image file from disk cache (if image was cached in disk cache before)
-	 *
-	 * @return <b>true</b> - if cached image file existed and was deleted; <b>false</b> - otherwise.
+	 * 清除已经磁盘中缓存的图片文件
+	 * @param imageUri	图片的Uri
+	 * @param diskCache	 磁盘缓存方法
+	 * @return  如果图片文件存在而且删除成功了,返回true;否则返回false
 	 */
 	public static boolean removeFromCache(String imageUri, DiskCache diskCache) {
 		File image = diskCache.get(imageUri);

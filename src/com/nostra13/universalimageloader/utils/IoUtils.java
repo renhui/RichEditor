@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2011-2014 Sergey Tarasevich
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package com.nostra13.universalimageloader.utils;
 
 import java.io.Closeable;
@@ -21,48 +6,25 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Provides I/O operations
- *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
- * @since 1.0.0
+ * (输入/输出)操作工具类
+ * 
+ * @author renhui
+ * @since 2015-11-3
  */
 public final class IoUtils {
-
-	/** {@value} */
-	public static final int DEFAULT_BUFFER_SIZE = 32 * 1024; // 32 KB
-	/** {@value} */
-	public static final int DEFAULT_IMAGE_TOTAL_SIZE = 500 * 1024; // 500 Kb
-	/** {@value} */
-	public static final int CONTINUE_LOADING_PERCENTAGE = 75;
+	
+	public static final int DEFAULT_BUFFER_SIZE = 32 * 1024;  // 默认缓冲区大小 --- 32KB
+	public static final int DEFAULT_IMAGE_TOTAL_SIZE = 500 * 1024;	// 默认图片总大小
+	public static final int CONTINUE_LOADING_PERCENTAGE = 75;  
 
 	private IoUtils() {
 	}
-
-	/**
-	 * Copies stream, fires progress events by listener, can be interrupted by listener. Uses buffer size =
-	 * {@value #DEFAULT_BUFFER_SIZE} bytes.
-	 *
-	 * @param is       Input stream
-	 * @param os       Output stream
-	 * @param listener null-ok; Listener of copying progress and controller of copying interrupting
-	 * @return <b>true</b> - if stream copied successfully; <b>false</b> - if copying was interrupted by listener
-	 * @throws IOException
-	 */
+	
+	
 	public static boolean copyStream(InputStream is, OutputStream os, CopyListener listener) throws IOException {
 		return copyStream(is, os, listener, DEFAULT_BUFFER_SIZE);
 	}
-
-	/**
-	 * Copies stream, fires progress events by listener, can be interrupted by listener.
-	 *
-	 * @param is         Input stream
-	 * @param os         Output stream
-	 * @param listener   null-ok; Listener of copying progress and controller of copying interrupting
-	 * @param bufferSize Buffer size for copying, also represents a step for firing progress listener callback, i.e.
-	 *                   progress event will be fired after every copied <b>bufferSize</b> bytes
-	 * @return <b>true</b> - if stream copied successfully; <b>false</b> - if copying was interrupted by listener
-	 * @throws IOException
-	 */
+	
 	public static boolean copyStream(InputStream is, OutputStream os, CopyListener listener, int bufferSize)
 			throws IOException {
 		int current = 0;
@@ -82,7 +44,7 @@ public final class IoUtils {
 		os.flush();
 		return true;
 	}
-
+	
 	private static boolean shouldStopLoading(CopyListener listener, int current, int total) {
 		if (listener != null) {
 			boolean shouldContinue = listener.onBytesCopied(current, total);
@@ -94,11 +56,10 @@ public final class IoUtils {
 		}
 		return false;
 	}
-
+	
 	/**
-	 * Reads all data from stream and close it silently
-	 *
-	 * @param is Input stream
+	 * 从流中读取所有的数据然后静默关闭输入流
+	 * @param is  输入流
 	 */
 	public static void readAndCloseStream(InputStream is) {
 		final byte[] bytes = new byte[DEFAULT_BUFFER_SIZE];
@@ -118,14 +79,18 @@ public final class IoUtils {
 			}
 		}
 	}
-
-	/** Listener and controller for copy process */
+	
+	
+	/** 监听和控制复制过程 */
 	public static interface CopyListener {
+		
 		/**
-		 * @param current Loaded bytes
-		 * @param total   Total bytes for loading
-		 * @return <b>true</b> - if copying should be continued; <b>false</b> - if copying should be interrupted
+		 * @param current 已经加载过的字节数
+		 * @param total	要加载的字节数
+		 * @return 如果拷贝需要继续则返回true, 如果拷贝需要被中断返回false
 		 */
 		boolean onBytesCopied(int current, int total);
+		
 	}
+
 }

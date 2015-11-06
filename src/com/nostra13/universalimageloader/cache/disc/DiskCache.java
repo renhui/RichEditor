@@ -1,85 +1,65 @@
-/*******************************************************************************
- * Copyright 2014 Sergey Tarasevich
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package com.nostra13.universalimageloader.cache.disc;
-
-import android.graphics.Bitmap;
-import com.nostra13.universalimageloader.utils.IoUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import android.graphics.Bitmap;
+
+import com.nostra13.universalimageloader.utils.IoUtils;
+
 /**
- * Interface for disk cache
- *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
- * @since 1.9.2
+ * 磁盘缓存接口
+ * @author renhui
  */
 public interface DiskCache {
+	
 	/**
-	 * Returns root directory of disk cache
-	 *
-	 * @return Root directory of disk cache
+	 * 获取磁盘缓存根目录
+	 * @return 磁盘缓存根目录
 	 */
 	File getDirectory();
-
+	
 	/**
-	 * Returns file of cached image
-	 *
-	 * @param imageUri Original image URI
-	 * @return File of cached image or <b>null</b> if image wasn't cached
+	 * 获取已经缓存下来的图片文件
+	 * @param imageUri
+	 * @return 已缓存的图片文件 or 空(如果该图片没有被缓存过)
 	 */
 	File get(String imageUri);
-
+	
 	/**
-	 * Saves image stream in disk cache.
-	 * Incoming image stream shouldn't be closed in this method.
-	 *
-	 * @param imageUri    Original image URI
-	 * @param imageStream Input stream of image (shouldn't be closed in this method)
-	 * @param listener    Listener for saving progress, can be ignored if you don't use
-	 *                    {@linkplain com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener
-	 *                    progress listener} in ImageLoader calls
-	 * @return <b>true</b> - if image was saved successfully; <b>false</b> - if image wasn't saved in disk cache.
-	 * @throws java.io.IOException
+	 * 保存图片流到磁盘
+	 * 注：输入图片流在这个方法里面不应该被关闭掉
+	 * @param imageUri 原始的图片Uri
+	 * @param imageStream 图片输入流(不能在此类里面关闭流)
+	 * @param listener 保存进程的监听(此监听可以被省略,如果在ImageLoader调用里面没有调用)
+	 * @return 如果保存成功了,返回true; 如果没有被保存成功，返回false
+	 * @throws IOException
 	 */
 	boolean save(String imageUri, InputStream imageStream, IoUtils.CopyListener listener) throws IOException;
-
+	
 	/**
-	 * Saves image bitmap in disk cache.
-	 *
-	 * @param imageUri Original image URI
-	 * @param bitmap   Image bitmap
-	 * @return <b>true</b> - if bitmap was saved successfully; <b>false</b> - if bitmap wasn't saved in disk cache.
+	 * 保存图片位图在磁盘缓存
+	 * @param imageUri  原始图片URI
+	 * @param bitmap  图片Bitmap
+	 * @return	如果保存成功了,返回true; 如果没有被保存成功，返回false
 	 * @throws IOException
 	 */
 	boolean save(String imageUri, Bitmap bitmap) throws IOException;
-
+	
 	/**
-	 * Removes image file associated with incoming URI
-	 *
-	 * @param imageUri Image URI
-	 * @return <b>true</b> - if image file is deleted successfully; <b>false</b> - if image file doesn't exist for
-	 * incoming URI or image file can't be deleted.
+	 * 删除指定的URI相关的图片文件
+	 * @param imageUri  图片文件的Uri
+	 * @return  如果图片文件删除成功,返回true; 如果指定uri的图片文件不存在或者图片文件不能够被删除掉,则返回false
 	 */
 	boolean remove(String imageUri);
-
-	/** Closes disk cache, releases resources. */
+	/**
+	 * 关闭磁盘缓存,释放所有资源
+	 */
 	void close();
-
-	/** Clears disk cache. */
+	
+	/**
+	 * 清除所有的磁盘缓存
+	 */
 	void clear();
 }
