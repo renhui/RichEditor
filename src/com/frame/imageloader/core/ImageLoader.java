@@ -28,9 +28,8 @@ public class ImageLoader {
 			throw new IllegalArgumentException(ERROR_WRONG_ARGUMENTS);
 		}
 		
-		if (TextUtils.isEmpty(uri)) {
-			
-		}
+		
+		
 	}
 
 }
