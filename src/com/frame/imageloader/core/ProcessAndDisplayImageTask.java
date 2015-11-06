@@ -12,7 +12,6 @@ public class ProcessAndDisplayImageTask implements Runnable {
 	
 	private static final String LOG_POSTPROCESS_IMAGE = "PostProcess image before displaying [%s]";
 	
-	private final ImageLoad
 
 	@Override
 	public void run() {

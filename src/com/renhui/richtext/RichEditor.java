@@ -195,6 +195,8 @@ public class RichEditor extends ScrollView {
 				}
 			}
 		});
+		// 设定view添加时的动画时间
+		mTransition.setDuration(300);
 		mContainerLayout.setLayoutTransition(mTransition);
 	}
 	
