@@ -1,7 +1,7 @@
 package com.example.richtext.utils;
 
 /**
- * 长微博内容处理类
+ * 长微博内容处理工具类
  * 
  * @author renhui
  */

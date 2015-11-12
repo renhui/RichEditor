@@ -31,7 +31,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -78,57 +77,68 @@ public class MainActivity extends FragmentActivity {
 					// 打开相机
 					openCamera();
 				} else if (v.getId() == btn3.getId()) {
-//					List<EditData> editList = editor.buildEditData();
-					// 下面的代码可以上传、或者保存，请自行实现
-//					dealEditData(editList);
-					
-//					TODO 生成长微博
+					// 生成长微博图片  TODO 需要处理OOM的问题
 					int picWidth = 1000; // 适应新浪微博解析分辨率
 					int fontSize = 30; // 字体大小  目前先自己设定18sp
+					int wordNum = (1000/(fontSize)) -1; // 转化成图片的时，每行显示的字数
 					
-					int WORDNUM = (1000/(fontSize)) -1; // 转化成图片的时，每行显示的字数
+					List<EditData> editList = editor.buildEditData();
+					float canvasHeight = (float) (fontSize * 0.8);  // 画布的高度
+					int x = 10; float y = (float) (fontSize * 0.8);  // 开始画的起始位置
 					
-					// 设置文字在图片中的显示间距
-					int x = 10;
-					float y = (float) (fontSize * 0.8);
-					LongBlogContent ct = LongBlogContent.getInstance();
-					ct.clearStatus();
-					ct.handleText("阿达的卡上来得及阿来得及阿来得及垃圾设定来科技阿萨德及垃圾设定来", WORDNUM);
+					for (EditData itemData : editList) {
+						if (itemData.inputStr != null) {
+							LongBlogContent ct = LongBlogContent.getInstance();
+							ct.clearStatus();
+							ct.handleText(itemData.inputStr, wordNum);
+							canvasHeight += 35*(ct.getHeight() + 1);
+						} else if (itemData.imagePath != null) {
+							BitmapFactory.Options options = new BitmapFactory.Options();
+							BitmapFactory.decodeFile(itemData.imagePath, options);
+							canvasHeight += options.outHeight;
+						}
+					}
 					
-					String imageUri = Environment.getExternalStorageDirectory().getPath() + "/EasyChangWeibo/" + "20151011162535.png";
-					BitmapFactory.Options options = new BitmapFactory.Options();
-					Bitmap b = BitmapFactory.decodeFile(imageUri, options);
-					Log.e("11", options.outHeight + "高度");
-					
-					Bitmap bitmap = Bitmap.createBitmap(picWidth, 35*(ct.getHeight() + 1) + options.outHeight, Config.ARGB_8888);
+					Bitmap bitmap = Bitmap.createBitmap(picWidth, (int)canvasHeight, Config.ARGB_8888);
 					//创建画布
 					Canvas canvas = new Canvas(bitmap);
 					//设置画布背景颜色
 					canvas.drawARGB(255, 255, 255, 255);
-					//创建画笔
-					Paint paint = new Paint();
-					//通过画笔设置字体的大小、格式、颜色
-					paint.setTextSize(fontSize);
-					paint.setARGB(255, 0, 0, 0);										
-					y = y + 10;					
-					//将处理后的内容画到画布上
-					String []ss = ct.getContent();
-					for(int i = 0; i < ct.getHeight(); i++){
-						canvas.drawText(ss[i], x, y, paint);
-						y = y + 35;
+					
+					for (EditData itemData : editList) {
+						if (itemData.inputStr != null) {
+							LongBlogContent ct = LongBlogContent.getInstance();
+							ct.clearStatus();
+							ct.handleText(itemData.inputStr, wordNum);
+							
+							//创建画笔
+							Paint paint = new Paint();
+							//通过画笔设置字体的大小、格式、颜色
+							paint.setTextSize(fontSize);
+							paint.setARGB(255, 0, 0, 0);										
+							y = y + 10;					
+							//将处理后的内容画到画布上
+							String []ss = ct.getContent();
+							for(int i = 0; i < ct.getHeight(); i++){
+								canvas.drawText(ss[i], x, y, paint);
+								y = y + 35;
+							}
+							canvas.save(Canvas.ALL_SAVE_FLAG);
+						} else if (itemData.imagePath != null) {
+							BitmapFactory.Options options = new BitmapFactory.Options();
+							Bitmap b = BitmapFactory.decodeFile(itemData.imagePath, options);
+							canvas.drawBitmap(b, 0, y, null);
+							canvas.save(Canvas.ALL_SAVE_FLAG);
+							y += options.outHeight + 35;
+						}
 					}
-					
-					canvas.save(Canvas.ALL_SAVE_FLAG);
-//					canvas.restore();			
-					
-					canvas.drawBitmap(b, 0, y, null);
 					canvas.restore();
 					
 					File sd = Environment.getExternalStorageDirectory();
 					String fpath = sd.getPath() + "/EasyChangWeibo";
 					
 					//设置保存路径
-					String path = sd.getPath() + "/EasyChangWeibo/" + "123.png";
+					String path = sd.getPath() + "/EasyChangWeibo/" + System.currentTimeMillis() +".png";
 
 					File file = new File(fpath);
 					if(!file.exists()){
@@ -139,29 +149,19 @@ public class MainActivity extends FragmentActivity {
 					try {
 						os = new FileOutputStream(new File(path));
 					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
-					
 					try {
 						os.flush();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					try {
 						os.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
 					
 					Intent shareIntent = new Intent(Intent.ACTION_SEND);
-					
 	                File file2 = new File(path);
 	                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file2));
-	                
 	                shareIntent.setType("image/*");
 	                startActivity(Intent.createChooser(shareIntent, "发布"));
 				}
@@ -177,22 +177,6 @@ public class MainActivity extends FragmentActivity {
 		btn3.setOnClickListener(btnListener);
 	}
 
-	/**
-	 * 负责处理编辑数据提交等事宜，请自行实现
-	 */
-	protected void dealEditData(List<EditData> editList) {
-		String data = "";
-		for (EditData itemData : editList) {
-			if (itemData.inputStr != null) {
-				data += itemData.inputStr;
-				Log.d("RichEditor", "commit inputStr=" + itemData.inputStr);
-			} else if (itemData.imagePath != null) {
-				data += itemData.imagePath;
-				Log.d("RichEditor", "commit imgePath=" + itemData.imagePath);
-			}
-		}
-		Log.e("111", data);
-	}
 
 	protected void openCamera() {
 		try {
@@ -216,8 +200,7 @@ public class MainActivity extends FragmentActivity {
 	 */
 	private String getPhotoFileName() {
 		Date date = new Date(System.currentTimeMillis());
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"'IMG'_yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyy-MM-dd HH:mm:ss");
 		return dateFormat.format(date) + ".jpg";
 	}
 
