@@ -41,7 +41,7 @@
 
     <!-- 富文本编辑器 -->
 
-    <com.renhui.richtext.RichEditor
+    <com.example.richtext.ui.widget.RichEditor
         android:id="@+id/richEditor"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
