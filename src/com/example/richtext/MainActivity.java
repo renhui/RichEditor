@@ -1,6 +1,9 @@
 package com.example.richtext;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +11,7 @@ import java.util.List;
 import com.frame.imageloader.core.ImageLoader;
 import com.frame.imageloader.core.ImageLoaderConfiguration;
 import com.renhui.richtext.EditData;
+import com.renhui.richtext.LongBlogContent;
 import com.renhui.richtext.RichEditor;
 
 import android.annotation.SuppressLint;
@@ -15,6 +19,11 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Bitmap.Config;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,6 +34,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Toast;
 
 /**
  * 主Activity入口
@@ -70,9 +80,92 @@ public class MainActivity extends FragmentActivity {
 					// 打开相机
 					openCamera();
 				} else if (v.getId() == btn3.getId()) {
-					List<EditData> editList = editor.buildEditData();
+//					List<EditData> editList = editor.buildEditData();
 					// 下面的代码可以上传、或者保存，请自行实现
-					dealEditData(editList);
+//					dealEditData(editList);
+					
+//					TODO 生成长微博
+					int picWidth = 1000; // 适应新浪微博解析分辨率
+					int fontSize = 30; // 字体大小  目前先自己设定18sp
+					
+					int WORDNUM = (1000/(fontSize)) -1; // 转化成图片的时，每行显示的字数
+					
+					// 设置文字在图片中的显示间距
+					int x = 10;
+					float y = (float) (fontSize * 0.8);
+					LongBlogContent ct = LongBlogContent.getInstance();
+					ct.clearStatus();
+					ct.handleText("阿达的卡上来得及阿来得及阿来得及垃圾设定来科技阿萨德及垃圾设定来", WORDNUM);
+					
+					String imageUri = Environment.getExternalStorageDirectory().getPath() + "/EasyChangWeibo/" + "20151011162535.png";
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					Bitmap b = BitmapFactory.decodeFile(imageUri, options);
+					Log.e("11", options.outHeight + "高度");
+					
+					Bitmap bitmap = Bitmap.createBitmap(picWidth, 35*(ct.getHeight() + 1) + options.outHeight, Config.ARGB_8888);
+					//创建画布
+					Canvas canvas = new Canvas(bitmap);
+					//设置画布背景颜色
+					canvas.drawARGB(255, 255, 255, 255);
+					//创建画笔
+					Paint paint = new Paint();
+					//通过画笔设置字体的大小、格式、颜色
+					paint.setTextSize(fontSize);
+					paint.setARGB(255, 0, 0, 0);										
+					y = y + 10;					
+					//将处理后的内容画到画布上
+					String []ss = ct.getContent();
+					for(int i = 0; i < ct.getHeight(); i++){
+						canvas.drawText(ss[i], x, y, paint);
+						y = y + 35;
+					}
+					
+					canvas.save(Canvas.ALL_SAVE_FLAG);
+//					canvas.restore();			
+					
+					canvas.drawBitmap(b, x, y, null);
+					canvas.restore();
+					
+					File sd = Environment.getExternalStorageDirectory();
+					String fpath = sd.getPath() + "/EasyChangWeibo";
+					
+					//设置保存路径
+					String path = sd.getPath() + "/EasyChangWeibo/" + "123.png";
+
+					File file = new File(fpath);
+					if(!file.exists()){
+						file.mkdir();
+					}
+
+					FileOutputStream os = null;
+					try {
+						os = new FileOutputStream(new File(path));
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+					
+					try {
+						os.flush();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						os.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					Intent shareIntent = new Intent(Intent.ACTION_SEND);
+					
+	                File file2 = new File(path);
+	                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file2));
+	                
+	                shareIntent.setType("image/*");
+	                startActivity(Intent.createChooser(shareIntent, "发布"));
 				}
 			}
 		};
