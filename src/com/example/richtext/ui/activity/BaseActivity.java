@@ -16,7 +16,7 @@ public class BaseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// 测试模式开启
+		// 集成测试模式开启
 		MobclickAgent.setDebugMode(true);
 	}
 
