@@ -9,12 +9,14 @@ import java.util.Date;
 import java.util.List;
 
 import com.example.richtext.R;
+import com.example.richtext.imageloader.core.DisplayImageOptions;
 import com.example.richtext.imageloader.core.ImageLoader;
 import com.example.richtext.imageloader.core.ImageLoaderConfiguration;
+import com.example.richtext.imageloader.core.assist.ImageScaleType;
+import com.example.richtext.imageloader.core.assist.ImageSize;
 import com.example.richtext.moudle.EditData;
 import com.example.richtext.ui.widget.RichEditor;
 import com.example.richtext.utils.LongBlogContent;
-
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
@@ -30,7 +32,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -42,14 +43,18 @@ import android.view.Window;
  * 
  */
 @SuppressLint("SimpleDateFormat")
-public class MainActivity extends FragmentActivity {
-	private static final int REQUEST_CODE_PICK_IMAGE = 1023;
+public class MainActivity extends BaseActivity {
+	private static final int LONG_BLOG_WIDTH = 440;   // 长微博最佳宽度
+	
+	private static final int REQUEST_CODE_PICK_IMAGE = 1023; 
 	private static final int REQUEST_CODE_CAPTURE_CAMEIA = 1022;
-	private RichEditor editor;
-	private View btn1, btn2, btn3;
-	private OnClickListener btnListener;
-
+	
 	private static final File PHOTO_DIR = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera");
+
+	private RichEditor mEditor;
+	private View mBtn1, mBtn2, mBtn3;
+	private OnClickListener mBtnListener;
+
 	private File mCurrentPhotoFile;// 照相机拍照得到的图片
 
 	@Override
@@ -57,32 +62,32 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
-
+		
+		
 		// 初始化图片加载控件
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
 		ImageLoader.getInstance().init(config);
 
-		editor = (RichEditor) findViewById(R.id.richEditor);
-		btnListener = new View.OnClickListener() {
+		mEditor = (RichEditor) findViewById(R.id.richEditor);
+		mBtnListener = new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				editor.hideKeyBoard();
-				if (v.getId() == btn1.getId()) {
+				mEditor.hideKeyBoard();
+				if (v.getId() == mBtn1.getId()) {
 					// 打开系统相册
 					Intent intent = new Intent(Intent.ACTION_PICK);
 					intent.setType("image/*");// 相片类型
 					startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
-				} else if (v.getId() == btn2.getId()) {
-					// 打开相机
+				} else if (v.getId() == mBtn2.getId()) {
+					// 打开相机 
 					openCamera();
-				} else if (v.getId() == btn3.getId()) {
-					// 生成长微博图片  TODO 需要处理OOM的问题
-					int picWidth = 1000; // 适应新浪微博解析分辨率
+				} else if (v.getId() == mBtn3.getId()) {
+					// 生成长微博图片 
 					int fontSize = 30; // 字体大小  目前先自己设定18sp
-					int wordNum = (1000/(fontSize)) -1; // 转化成图片的时，每行显示的字数
+					int wordNum = (LONG_BLOG_WIDTH / (fontSize)) -1; // 转化成图片的时，每行显示的字数
 					
-					List<EditData> editList = editor.buildEditData();
+					List<EditData> editList = mEditor.buildEditData();
 					float canvasHeight = (float) (fontSize * 0.8);  // 画布的高度
 					int x = 10; float y = (float) (fontSize * 0.8);  // 开始画的起始位置
 					
@@ -94,12 +99,13 @@ public class MainActivity extends FragmentActivity {
 							canvasHeight += 35*(ct.getHeight() + 1);
 						} else if (itemData.imagePath != null) {
 							BitmapFactory.Options options = new BitmapFactory.Options();
+							options.inJustDecodeBounds = true;
 							BitmapFactory.decodeFile(itemData.imagePath, options);
-							canvasHeight += options.outHeight;
+							canvasHeight += (float)options.outHeight / ((float) options.outWidth / (float) LONG_BLOG_WIDTH);
 						}
 					}
 					
-					Bitmap bitmap = Bitmap.createBitmap(picWidth, (int)canvasHeight, Config.ARGB_8888);
+					Bitmap bitmap = Bitmap.createBitmap(LONG_BLOG_WIDTH, (int)canvasHeight, Config.ARGB_8888);
 					//创建画布
 					Canvas canvas = new Canvas(bitmap);
 					//设置画布背景颜色
@@ -126,10 +132,14 @@ public class MainActivity extends FragmentActivity {
 							canvas.save(Canvas.ALL_SAVE_FLAG);
 						} else if (itemData.imagePath != null) {
 							BitmapFactory.Options options = new BitmapFactory.Options();
-							Bitmap b = BitmapFactory.decodeFile(itemData.imagePath, options);
+							options.inJustDecodeBounds = true;
+							BitmapFactory.decodeFile(itemData.imagePath, options);
+							DisplayImageOptions opt = new DisplayImageOptions.Builder().imageScaleType(ImageScaleType.EXACTLY).build();
+							Bitmap b = ImageLoader.getInstance().loadImageSync("file://" + itemData.imagePath, 
+									new ImageSize(LONG_BLOG_WIDTH, (int) ((float)options.outHeight / ((float) options.outWidth / (float) LONG_BLOG_WIDTH))), opt);
 							canvas.drawBitmap(b, 0, y, null);
 							canvas.save(Canvas.ALL_SAVE_FLAG);
-							y += options.outHeight + 35;
+							y += ((float)options.outHeight / ((float) options.outWidth / (float) LONG_BLOG_WIDTH)) + 35;
 						}
 					}
 					canvas.restore();
@@ -168,16 +178,15 @@ public class MainActivity extends FragmentActivity {
 			}
 		};
 
-		btn1 = findViewById(R.id.button1);
-		btn2 = findViewById(R.id.button2);
-		btn3 = findViewById(R.id.button3);
+		mBtn1 = findViewById(R.id.button1);
+		mBtn2 = findViewById(R.id.button2);
+		mBtn3 = findViewById(R.id.button3);
 
-		btn1.setOnClickListener(btnListener);
-		btn2.setOnClickListener(btnListener);
-		btn3.setOnClickListener(btnListener);
+		mBtn1.setOnClickListener(mBtnListener);
+		mBtn2.setOnClickListener(mBtnListener);
+		mBtn3.setOnClickListener(mBtnListener);
 	}
-
-
+	
 	protected void openCamera() {
 		try {
 			// Launch camera to take photo for selected contact
@@ -224,7 +233,7 @@ public class MainActivity extends FragmentActivity {
 	 * @param imagePath
 	 */
 	private void insertBitmap(String imagePath) {
-		editor.insertImage(imagePath);
+		mEditor.insertImage(imagePath);
 	}
 
 	/**
