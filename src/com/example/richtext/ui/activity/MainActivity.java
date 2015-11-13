@@ -15,8 +15,12 @@ import com.example.richtext.imageloader.core.ImageLoaderConfiguration;
 import com.example.richtext.imageloader.core.assist.ImageScaleType;
 import com.example.richtext.imageloader.core.assist.ImageSize;
 import com.example.richtext.moudle.EditData;
+import com.example.richtext.moudle.Note;
+import com.example.richtext.sqlite.DatabaseAccessFactory;
+import com.example.richtext.sqlite.tables.NoteAccessor;
 import com.example.richtext.ui.widget.RichEditor;
 import com.example.richtext.utils.LongBlogContent;
+
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
@@ -32,9 +36,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.ImageColumns;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Toast;
 
 /**
  * 主Activity入口
@@ -83,11 +90,27 @@ public class MainActivity extends BaseActivity {
 					// 打开相机 
 					openCamera();
 				} else if (v.getId() == mBtn3.getId()) {
+					
+					List<EditData> editList = mEditor.buildEditData();
+					
+					// 存储到数据库
+					String content = dealEditData(editList);
+					if (TextUtils.isEmpty(content)) {
+						return;
+					} else {
+						Note note = new Note();
+						note.content = content;
+						note.modifyTime = System.currentTimeMillis();
+						note.nativeId = String.valueOf(System.currentTimeMillis());
+						NoteAccessor accessor = DatabaseAccessFactory.getInstance(MainActivity.this).noteAccessor();
+						accessor.insert(note);
+					}
+					
 					// 生成长微博图片 
 					int fontSize = 30; // 字体大小  目前先自己设定18sp
 					int wordNum = (LONG_BLOG_WIDTH / (fontSize)) -1; // 转化成图片的时，每行显示的字数
 					
-					List<EditData> editList = mEditor.buildEditData();
+//					List<EditData> editList = mEditor.buildEditData();
 					float canvasHeight = (float) (fontSize * 0.8);  // 画布的高度
 					int x = 10; float y = (float) (fontSize * 0.8);  // 开始画的起始位置
 					
@@ -239,7 +262,7 @@ public class MainActivity extends BaseActivity {
 	/**
 	 * 根据Uri获取图片文件的绝对路径
 	 */
-	public String getRealFilePath(final Uri uri) {
+	private String getRealFilePath(final Uri uri) {
 		if (null == uri) {
 			return null;
 		}
@@ -265,4 +288,37 @@ public class MainActivity extends BaseActivity {
 		}
 		return data;
 	}
+	
+	private String dealEditData(List<EditData> editList) {
+		String data = "";
+		for (EditData itemData : editList) {
+			if (itemData.inputStr != null) {
+				data += itemData.inputStr;
+				Log.d("RichEditor", "commit inputStr=" + itemData.inputStr);
+			} else if (itemData.imagePath != null) {
+				data += itemData.imagePath;
+				Log.d("RichEditor", "commit imgePath=" + itemData.imagePath);
+			}
+		}
+		return data;
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		
+	}
+	
+	
 }

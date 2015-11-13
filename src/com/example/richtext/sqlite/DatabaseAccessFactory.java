@@ -1,5 +1,7 @@
 package com.example.richtext.sqlite;
 
+import com.example.richtext.sqlite.tables.NoteAccessor;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -14,11 +16,16 @@ public class DatabaseAccessFactory {
 	private DatabaseHelper mDatabaseHelper;
 	private SQLiteDatabase mDatabase;
 	
+	private NoteAccessor mNoteAccessor;
+	
 	private DatabaseAccessFactory(Context context) {
 		super();
 		
 		this.mDatabaseHelper = new DatabaseHelper(context.getApplicationContext());
 		this.mDatabase = this.mDatabaseHelper.getDatabase();
+		
+		this.mNoteAccessor = new NoteAccessor(this.mDatabase);
+		
 	}
 	
 	
@@ -29,6 +36,11 @@ public class DatabaseAccessFactory {
 		}
 		
 		return mInstance;
+	}
+	
+	
+	public NoteAccessor noteAccessor() {
+		return this.mNoteAccessor;
 	}
 	
 	
@@ -43,5 +55,7 @@ public class DatabaseAccessFactory {
 		this.mDatabase.close();
 		this.mDatabaseHelper.close();
 	}
+	
+	
 
 }

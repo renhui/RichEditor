@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String mDbFolder = "richtext_sqlite";
 	private static final String mDbName = "richtext.db";
-	private static final int mDbVersion = 0;
+	private static final int mDbVersion = 1;
 
 	private SQLiteDatabase mDatabase;
 
