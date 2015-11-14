@@ -1,21 +1,34 @@
 package com.example.richtext.sqlite.tables;
 
+import java.util.ArrayList;
+
 import com.example.richtext.moudle.Note;
 import com.example.richtext.utils.DebugTraceTool;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 /**
- * 便签数据库操作
+ * Note数据库操作
  * @author renhui
  *
  */
 public class NoteAccessor extends TableAccessor {
+	
+	private static final String[] noteColumnList = new String[] {Tables.mNoteNativeId, Tables.mNoteContent, Tables.mNoteModifyTime};
 
 	public NoteAccessor(SQLiteDatabase database) {
 		super(database);
+	}
+	
+	private Note getNote(Cursor c) {
+		Note note = new Note();
+		note.nativeId = c.getString(c.getColumnIndex(Tables.mNoteNativeId));
+		note.content =c.getString(c.getColumnIndex(Tables.mNoteContent));
+		note.modifyTime = c.getLong(c.getColumnIndex(Tables.mNoteModifyTime));
+		return note;
 	}
 	
 	
@@ -33,4 +46,21 @@ public class NoteAccessor extends TableAccessor {
 		long num = mDatabase.insert(Tables.mNoteTable, null, cv);
 		DebugTraceTool.debugTraceE(this, "insert number " + num);
 	}
+	
+	
+	/** 查询所有的便签  */
+	public ArrayList<Note> getNotes() {
+		ArrayList<Note> list = new ArrayList<Note>();
+		Cursor cursor = mDatabase.query(Tables.mNoteTable, noteColumnList, null, null, null, null, Tables.mNoteModifyTime);
+		if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+			do {
+				list.add(getNote(cursor));
+			} while (cursor.moveToNext());
+		}
+		if (cursor != null) {
+			cursor.close();
+		}
+		return list;
+	}
+	
 }

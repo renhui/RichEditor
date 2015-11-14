@@ -41,7 +41,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.Toast;
 
 /**
  * 主Activity入口

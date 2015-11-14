@@ -22,7 +22,7 @@ public class DatabaseAccessFactory {
 		super();
 		
 		this.mDatabaseHelper = new DatabaseHelper(context.getApplicationContext());
-		this.mDatabase = this.mDatabaseHelper.getDatabase();
+		this.mDatabase = this.mDatabaseHelper.getWritableDatabase();
 		
 		this.mNoteAccessor = new NoteAccessor(this.mDatabase);
 		
