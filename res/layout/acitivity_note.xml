@@ -34,17 +34,11 @@
                 android:id="@+id/action_a"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/white"
-                fab:fab_colorPressed="@color/white_pressed"
-                fab:fab_title="Action A" />
+                android:scaleType="fitXY"
+                android:src="@drawable/add_note"
+                fab:fab_icon="@drawable/add_note"
+                fab:fab_size="normal" />
 
-            <com.example.richtext.ui.widget.fab.FloatingActionButton
-                android:id="@+id/action_b"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/white"
-                fab:fab_colorPressed="@color/white_pressed"
-                fab:fab_title="Action with a very long name that won\&apos;t fit on the screen" />
         </com.example.richtext.ui.widget.fab.FloatingActionsMenu>
     </RelativeLayout>
 

@@ -43,13 +43,12 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 
 /**
- * 主Activity入口
- * 
+ * 编辑Note页面
  * @author RenHui
  * 
  */
 @SuppressLint("SimpleDateFormat")
-public class MainActivity extends BaseActivity {
+public class EditNoteActivity extends BaseActivity {
 	private static final int LONG_BLOG_WIDTH = 440;   // 长微博最佳宽度
 	
 	private static final int REQUEST_CODE_PICK_IMAGE = 1023; 
@@ -101,7 +100,7 @@ public class MainActivity extends BaseActivity {
 						note.content = content;
 						note.modifyTime = System.currentTimeMillis();
 						note.nativeId = String.valueOf(System.currentTimeMillis());
-						NoteAccessor accessor = DatabaseAccessFactory.getInstance(MainActivity.this).noteAccessor();
+						NoteAccessor accessor = DatabaseAccessFactory.getInstance(EditNoteActivity.this).noteAccessor();
 						accessor.insert(note);
 					}
 					
@@ -288,6 +287,7 @@ public class MainActivity extends BaseActivity {
 		return data;
 	}
 	
+	/** 转换编辑框内的所有内容为字符串 */
 	private String dealEditData(List<EditData> editList) {
 		String data = "";
 		for (EditData itemData : editList) {
@@ -301,23 +301,4 @@ public class MainActivity extends BaseActivity {
 		}
 		return data;
 	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-	}
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
-		
-	}
-	
-	
 }
