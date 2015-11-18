@@ -11,9 +11,11 @@
         android:orientation="horizontal" >
 
         <EditText
+            android:id="@+id/editor_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:textColor="#111111"
             android:padding="10dp"
             android:background="@android:color/transparent"
             android:hint="@string/note_editor_title" />

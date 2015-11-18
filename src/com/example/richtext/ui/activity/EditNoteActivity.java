@@ -19,6 +19,7 @@ import com.example.richtext.sqlite.DatabaseAccessFactory;
 import com.example.richtext.sqlite.tables.NoteAccessor;
 import com.example.richtext.ui.widget.RichEditor;
 import com.example.richtext.utils.LongBlogContent;
+import com.example.richtext.utils.ToastUtils;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -38,11 +39,12 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.text.TextUtils;
 import android.text.TextUtils.TruncateAt;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.TextView;
 
 /**
@@ -61,7 +63,8 @@ public class EditNoteActivity extends BaseActivity {
 
 	private ActionBar mActionBar;
 	private TextView mActionBarTitle;
-	private RichEditor mEditor;
+	private EditText mTitleEditor;
+	private RichEditor mContentEditor;
 	private View mBtn1, mBtn2, mBtn3;
 	private OnClickListener mBtnListener;
 
@@ -70,16 +73,16 @@ public class EditNoteActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		setUpActionBar();
 		
-		mEditor = (RichEditor) findViewById(R.id.richEditor);
+		mTitleEditor = (EditText) findViewById(R.id.editor_title);
+		mContentEditor = (RichEditor) findViewById(R.id.richEditor);
 		mBtnListener = new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				mEditor.hideKeyBoard();
+				mContentEditor.hideKeyBoard();
 				if (v.getId() == mBtn1.getId()) {
 					// 打开系统相册
 					Intent intent = new Intent(Intent.ACTION_PICK);
@@ -122,7 +125,6 @@ public class EditNoteActivity extends BaseActivity {
 		mActionBarTitle.setGravity(Gravity.CENTER_VERTICAL);
 		mActionBarTitle.setClickable(true);
 		mActionBarTitle.setPadding(5, 0, 32, 0);
-		// textView.setBackgroundResource(R.drawable.action_button_bg);
 		mActionBarTitle.setText("编辑便签");
 		mActionBarTitle.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -131,6 +133,33 @@ public class EditNoteActivity extends BaseActivity {
 			}
 		});
 		mActionBar.setCustomView(mActionBarTitle);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.save_note_menu, menu);
+		View view = menu.findItem(R.id.item_save_note).getActionView();
+		TextView tv = (TextView) view.findViewById(R.id.save_note);
+		tv.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				String title = mTitleEditor.getEditableText().toString();
+				if(title == null || title.isEmpty() || TextUtils.isEmpty(title)) {
+					ToastUtils.show("标题为空,请输入标题 ＾＿＾");
+					return;
+				}
+				
+				List<EditData> editList = mContentEditor.buildEditData();
+				String content = dealEditData(editList);
+				if(content == null || content.isEmpty() || TextUtils.isEmpty(content)) {
+					ToastUtils.show("内容为空,请输入内容 ＾＿＾");
+					return;
+				}
+			
+			}
+		});
+		return super.onCreateOptionsMenu(menu);
 	}
 	
 	protected void openCamera() {
@@ -150,9 +179,7 @@ public class EditNoteActivity extends BaseActivity {
 		return intent;
 	}
 
-	/**
-	 * 用当前时间给取得的图片命名
-	 */
+	/** 用当前时间给取得的图片命名 */
 	private String getPhotoFileName() {
 		Date date = new Date(System.currentTimeMillis());
 		SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyy-MM-dd HH:mm:ss");
@@ -179,7 +206,7 @@ public class EditNoteActivity extends BaseActivity {
 	 * @param imagePath
 	 */
 	private void insertBitmap(String imagePath) {
-		mEditor.insertImage(imagePath);
+		mContentEditor.insertImage(imagePath);
 	}
 
 	/**
@@ -197,8 +224,7 @@ public class EditNoteActivity extends BaseActivity {
 		} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
 			data = uri.getPath();
 		} else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
-			Cursor cursor = getContentResolver().query(uri,
-					new String[] { ImageColumns.DATA }, null, null, null);
+			Cursor cursor = getContentResolver().query(uri, new String[] { ImageColumns.DATA }, null, null, null);
 			if (null != cursor) {
 				if (cursor.moveToFirst()) {
 					int index = cursor.getColumnIndex(ImageColumns.DATA);
@@ -218,10 +244,8 @@ public class EditNoteActivity extends BaseActivity {
 		for (EditData itemData : editList) {
 			if (itemData.inputStr != null) {
 				data += itemData.inputStr;
-				Log.d("RichEditor", "commit inputStr=" + itemData.inputStr);
 			} else if (itemData.imagePath != null) {
 				data += itemData.imagePath;
-				Log.d("RichEditor", "commit imgePath=" + itemData.imagePath);
 			}
 		}
 		return data;
@@ -230,7 +254,7 @@ public class EditNoteActivity extends BaseActivity {
 	
 	/** 生成长微博 */
 	private void newLongBlog() {
-		List<EditData> editList = mEditor.buildEditData();
+		List<EditData> editList = mContentEditor.buildEditData();
 		
 		// 存储到数据库
 		String content = dealEditData(editList);
@@ -249,7 +273,6 @@ public class EditNoteActivity extends BaseActivity {
 		int fontSize = 30; // 字体大小  目前先自己设定18sp
 		int wordNum = (LONG_BLOG_WIDTH / (fontSize)) -1; // 转化成图片的时，每行显示的字数
 		
-//		List<EditData> editList = mEditor.buildEditData();
 		float canvasHeight = (float) (fontSize * 0.8);  // 画布的高度
 		int x = 10; float y = (float) (fontSize * 0.8);  // 开始画的起始位置
 		
