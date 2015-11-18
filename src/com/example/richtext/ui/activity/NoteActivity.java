@@ -29,12 +29,6 @@ public class NoteActivity extends BaseActivity {
 		setContentView(R.layout.acitivity_note);
 		mListView = (ListView) findViewById(R.id.note_list);
 
-		ArrayList<Note> noteList = DatabaseAccessFactory.getInstance(this)
-				.noteAccessor().getNotes();
-		DebugTraceTool.debugTraceE(this, "数量" + noteList.size());
-		mAdapter = new NoteAdapter(this, noteList);
-		mListView.setAdapter(mAdapter);
-
 		ShapeDrawable drawable = new ShapeDrawable(new OvalShape());
 		drawable.getPaint().setColor(getResources().getColor(R.color.white));
 
@@ -45,6 +39,16 @@ public class NoteActivity extends BaseActivity {
 				startActivity(new Intent(NoteActivity.this, EditNoteActivity.class));
 			}
 		});
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		ArrayList<Note> noteList = DatabaseAccessFactory.getInstance(this).noteAccessor().getNotes();
+		DebugTraceTool.debugTraceE(this, "数量" + noteList.size());
+		mAdapter = new NoteAdapter(this, noteList);
+		mListView.setAdapter(mAdapter);
 
 	}
 }

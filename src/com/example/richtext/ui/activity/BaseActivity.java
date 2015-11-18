@@ -15,7 +15,6 @@ public class BaseActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		// 集成测试模式开启
 		MobclickAgent.setDebugMode(true);
 	}
@@ -23,14 +22,12 @@ public class BaseActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-
 		MobclickAgent.onPause(this);
 	}
 

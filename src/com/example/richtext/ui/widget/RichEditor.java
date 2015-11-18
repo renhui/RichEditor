@@ -105,7 +105,7 @@ public class RichEditor extends ScrollView {
 		// 创建默认的Edit
 		LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		editNormalPadding = dip2px(EDIT_PADDING);
-		EditText firstEdit = createEditText("input here", dip2px(EDIT_FIRST_PADDING_TOP));
+		EditText firstEdit = createEditText("请输入内容...", dip2px(EDIT_FIRST_PADDING_TOP));
 		mContainerLayout.addView(firstEdit, firstEditParam);
 		mLastFocusEdit = firstEdit;
 	}

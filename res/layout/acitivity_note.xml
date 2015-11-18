@@ -37,7 +37,7 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/add_note"
                 fab:fab_icon="@drawable/add_note"
-                fab:fab_size="normal" />
+                fab:fab_size="mini" />
 
         </com.example.richtext.ui.widget.fab.FloatingActionsMenu>
     </RelativeLayout>

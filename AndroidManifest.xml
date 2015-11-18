@@ -17,46 +17,42 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
-
     <application
+        android:name="com.example.richtext.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
-        <activity
-            android:name="com.example.richtext.ui.activity.EditNoteActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
-            <!-- <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            
-             -->
-            
-        </activity>
+        
+        <!-- 便签展示界面 (主页)-->
         <activity
             android:name="com.example.richtext.ui.activity.NoteActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" >
-            
-             <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <!-- 便签编辑界面 -->
+        <activity
+            android:name="com.example.richtext.ui.activity.EditNoteActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
-        <!-- umeng config -->
+        <!-- 友盟 配置 -->
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5644729867e58e76ea001298" />
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="app store" />
-        <!-- umeng config END -->
+        <!-- END  友盟配置 -->
+        
+        
     </application>
 
 </manifest>
