@@ -10,6 +10,7 @@ import com.example.richtext.ui.widget.fab.FloatingActionButton;
 import com.example.richtext.utils.DebugTraceTool;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
@@ -36,7 +37,9 @@ public class NoteActivity extends BaseActivity {
 		actionA.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				startActivity(new Intent(NoteActivity.this, EditNoteActivity.class));
+				Intent intent = new Intent(NoteActivity.this, EditNoteActivity.class);
+				intent.putExtra("next_page_title", "新建便签");
+				startActivity(intent);
 			}
 		});
 	}

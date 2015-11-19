@@ -59,7 +59,7 @@ public class DatabaseAccessFactory {
 		this.mDatabaseHelper.close();
 	}
 
-	public synchronized void openDatabase() throws SQLException {
+	private synchronized void openDatabase() throws SQLException {
 		mDatabaseHelper = new DatabaseHelper(mContext, mDbName, null, mDbVersion);
 		mDatabase = mDatabaseHelper.getWritableDatabase();
 	}

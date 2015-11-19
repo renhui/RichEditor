@@ -9,7 +9,9 @@
     <ListView
         android:id="@+id/note_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:dividerHeight="3dp"
+        android:padding="6dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -37,8 +39,8 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/add_note"
                 fab:fab_icon="@drawable/add_note"
-                fab:fab_size="mini" />
-
+                fab:fab_size="mini"
+                fab:fab_title="@string/create_note" />
         </com.example.richtext.ui.widget.fab.FloatingActionsMenu>
     </RelativeLayout>
 

@@ -26,6 +26,7 @@ import android.app.ActionBar;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,6 +62,8 @@ public class EditNoteActivity extends BaseActivity {
 	
 	private static final File PHOTO_DIR = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera");
 
+	private String mTitle;
+	
 	private ActionBar mActionBar;
 	private TextView mActionBarTitle;
 	private EditText mTitleEditor;
@@ -74,6 +77,10 @@ public class EditNoteActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		Intent intent = getIntent();
+		mTitle = intent.getStringExtra("next_page_title");
+		
 		setUpActionBar();
 		
 		mTitleEditor = (EditText) findViewById(R.id.editor_title);
@@ -122,10 +129,11 @@ public class EditNoteActivity extends BaseActivity {
 		mActionBarTitle.setMaxLines(2);
 		mActionBarTitle.setEllipsize(TruncateAt.END);
 		mActionBarTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
+		mActionBarTitle.setTextColor(getResources().getColor(R.color.pink));
 		mActionBarTitle.setGravity(Gravity.CENTER_VERTICAL);
 		mActionBarTitle.setClickable(true);
 		mActionBarTitle.setPadding(5, 0, 32, 0);
-		mActionBarTitle.setText("编辑便签");
+		mActionBarTitle.setText(mTitle);
 		mActionBarTitle.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -156,7 +164,16 @@ public class EditNoteActivity extends BaseActivity {
 					ToastUtils.show("内容为空,请输入内容 ＾＿＾");
 					return;
 				}
-			
+				
+				Note note = new Note();
+				note.nativeId = String.valueOf(System.currentTimeMillis());
+				note.title = title;
+				note.content = content;
+				note.createTime = System.currentTimeMillis();
+				note.modifyTime = System.currentTimeMillis();
+				DatabaseAccessFactory.getInstance(EditNoteActivity.this).noteAccessor().insert(note);
+				ToastUtils.show("便签保存成功");
+				finish();
 			}
 		});
 		return super.onCreateOptionsMenu(menu);

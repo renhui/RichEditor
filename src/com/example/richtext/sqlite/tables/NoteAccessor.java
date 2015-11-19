@@ -17,7 +17,12 @@ import android.text.TextUtils;
  */
 public class NoteAccessor extends TableAccessor {
 	
-	private static final String[] noteColumnList = new String[] {Tables.mNoteNativeId, Tables.mNoteContent, Tables.mNoteModifyTime};
+	private static final String[] noteColumnList = 
+			new String[] {Tables.mNoteNativeId, 
+						  Tables.mNoteTitle, 
+						  Tables.mNoteContent,
+						  Tables.mNoteCreateTime,
+						  Tables.mNoteModifyTime};
 
 	public NoteAccessor(SQLiteDatabase database) {
 		super(database);
