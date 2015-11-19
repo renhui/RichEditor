@@ -8,11 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.richtext.R;
 import com.example.richtext.moudle.Note;
+import com.example.richtext.ui.widget.MixedTextView;
 import com.example.richtext.utils.TimeUtils;
 import com.example.richtext.utils.ToastUtils;
 
@@ -49,21 +52,22 @@ public class NoteAdapter extends BaseAdapter {
 			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.view_note, null);
 		}
-
+		LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.note_layer);
 		TextView title = (TextView) convertView.findViewById(R.id.note_title);
-		title.setText(mNoteList.get(position).content);
+		title.setText(mNoteList.get(position).title);
 		
 		TextView time = (TextView) convertView.findViewById(R.id.time);
 		time.setText(TimeUtils.getTime(mNoteList.get(position).modifyTime));
 		
+		ll.addView(new MixedTextView(mContext, mNoteList.get(position).content));
 		convertView.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				ToastUtils.show(mNoteList.get(position).title);
+				ToastUtils.show(mNoteList.get(position).content);
 			}
 		});
-		return convertView;
+		return ll;
 	}
 
 }

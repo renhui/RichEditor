@@ -322,6 +322,7 @@ public class RichEditor extends ScrollView {
 	}
 	
 	
+	/**获取编辑框的信息*/
 	public List<EditData> buildEditData() {
 		List<EditData> dataList = new ArrayList<EditData>();
 		int num = mContainerLayout.getChildCount();
@@ -333,7 +334,7 @@ public class RichEditor extends ScrollView {
 				itemData.inputStr = item.getText().toString();
 			} else if (itemView instanceof RelativeLayout) {
 				RichImageView item = (RichImageView) itemView.findViewById(R.id.edit_imageView);
-				itemData.imagePath = item.getPicturePath();
+				itemData.imagePath = "<img src=\"" + item.getPicturePath() + "\" />";
 			}
 			dataList.add(itemData);
 		}
