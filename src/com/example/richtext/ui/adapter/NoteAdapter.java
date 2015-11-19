@@ -60,7 +60,7 @@ public class NoteAdapter extends BaseAdapter {
 			
 			@Override
 			public void onClick(View v) {
-				ToastUtils.show(mNoteList.get(position).content);
+				ToastUtils.show(mNoteList.get(position).title);
 			}
 		});
 		return convertView;
