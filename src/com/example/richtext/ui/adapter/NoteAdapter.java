@@ -78,6 +78,8 @@ public class NoteAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(mContext, NoteDetailActivity.class);
+					intent.putExtra("note_title", note.title);
+					//  TODO 还可以带其他参数
 					intent.putExtra("note_content", note.content);
 					mContext.startActivity(intent);
 				}

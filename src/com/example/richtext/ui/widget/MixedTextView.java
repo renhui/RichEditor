@@ -1,13 +1,18 @@
 package com.example.richtext.ui.widget;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.example.richtext.R;
 import com.example.richtext.imageloader.core.DisplayImageOptions;
 import com.example.richtext.imageloader.core.ImageLoader;
 import com.example.richtext.imageloader.core.assist.ImageScaleType;
+import com.example.richtext.imageloader.core.assist.ImageSize;
+
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.Html;
 import android.util.SparseArray;
 import android.view.Gravity;
@@ -22,11 +27,11 @@ import android.widget.ImageView.ScaleType;
  * @author renhui
  */
 public class MixedTextView extends LinearLayout {
+	
 	public static final String IMAGE_SRC_REGEX = "<img[^<>]*?\\ssrc=['\"]?(.*?)['\"].*?>";
-
+	
 	private Context mContext;
 	private String mContent;
-	private int mColorRes;
 	private SparseArray<String> mImageArray;
 
 	public MixedTextView(Context context, String content) {
@@ -34,7 +39,6 @@ public class MixedTextView extends LinearLayout {
 		mContext = context;
 		mContent = content;
 		mImageArray = new SparseArray<String>();
-		mColorRes = -1;
 		this.setOrientation(LinearLayout.VERTICAL);
 		LinearLayout.LayoutParams params = new LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT,
@@ -63,24 +67,20 @@ public class MixedTextView extends LinearLayout {
 					s = mContent.substring(0, mImageArray.keyAt(i));
 					appendTextView(s);
 					appendImageView(mImageArray.valueAt(i));
-					s = mContent.substring(mImageArray.keyAt(i),
-							mContent.length());
+					s = mContent.substring(mImageArray.keyAt(i), mContent.length());
 					appendTextView(s);
 				} else if (i == 0) {
 					s = mContent.substring(0, mImageArray.keyAt(i));
 					appendTextView(s);
 					appendImageView(mImageArray.valueAt(i));
 				} else if (i == mImageArray.size() - 1) {
-					s = mContent.substring(mImageArray.keyAt(i - 1),
-							mImageArray.keyAt(i));
+					s = mContent.substring(mImageArray.keyAt(i - 1), mImageArray.keyAt(i));
 					appendTextView(s);
-					s = mContent.substring(mImageArray.keyAt(i),
-							mContent.length());
+					s = mContent.substring(mImageArray.keyAt(i), mContent.length());
 					appendImageView(mImageArray.valueAt(i));
 					appendTextView(s);
 				} else {
-					s = mContent.substring(mImageArray.keyAt(i - 1),
-							mImageArray.keyAt(i));
+					s = mContent.substring(mImageArray.keyAt(i - 1), mImageArray.keyAt(i));
 					appendTextView(s);
 					appendImageView(mImageArray.valueAt(i));
 				}
@@ -117,17 +117,24 @@ public class MixedTextView extends LinearLayout {
 	}
 
 	private void showImage(int phone_width, final String uriStr, final ImageView image) {
-		// TODO
-		// 需要准确的计算图片的大小问题
-		LinearLayout.LayoutParams imageParam = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		image.setLayoutParams(imageParam);
-		DisplayImageOptions opts = new DisplayImageOptions.Builder()
-				.imageScaleType(ImageScaleType.EXACTLY)
-				.resetViewBeforeLoading(false).build();
-		Bitmap bitmap = ImageLoader.getInstance().loadImageSync(
-				"file:/" + uriStr, opts);
-		image.setImageBitmap(bitmap);
-		image.invalidate();
+		if(isFileExist(uriStr)) {
+			// 需要准确的计算图片的大小问题
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+			BitmapFactory.decodeFile(uriStr, options);
+			float mult = (float) options.outWidth / (float) phone_width;
+			LinearLayout.LayoutParams imageParam = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			image.setLayoutParams(imageParam);
+			DisplayImageOptions opts = new DisplayImageOptions.Builder()
+					.imageScaleType(ImageScaleType.EXACTLY)
+					.resetViewBeforeLoading(false).build();
+			Bitmap bitmap = ImageLoader.getInstance().loadImageSync(
+					"file:/" + uriStr, new ImageSize((int) (phone_width * 0.95f), (int)((float)options.outHeight / mult * 0.95f) ), opts);
+			image.setImageBitmap(bitmap);
+			image.invalidate();
+		} else {
+			// 后续功能里面可能有去网络上加载图片的方式
+		}
 	}
 
 	// 添加文本内容
@@ -152,15 +159,24 @@ public class MixedTextView extends LinearLayout {
 		TextView textView = new TextView(mContext);
 		LinearLayout.LayoutParams params = new LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		textView.setGravity(Gravity.CENTER_VERTICAL);
-		textView.setTextSize(16);
-
-		if (mColorRes != -1) {
-			textView.setTextColor(getContext().getResources().getColor(mColorRes));
-		}
-
-		textView.setPadding(0, 3, 0, 3);
+		textView.setTextSize(18);
+		textView.setTextColor(getResources().getColor(R.color.blue_semi_transparent_pressed));
+		textView.setPadding(0, 6, 0, 6);
 		textView.setLayoutParams(params);
 		textView.setText(Html.fromHtml(content));
 		this.addView(textView);
+	}
+	
+	/*** 检测图片是否在指定的目录里面 */
+	public static boolean isFileExist(String path) {
+		try {
+			File f = new File(path);
+			if (!f.exists()) {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 }

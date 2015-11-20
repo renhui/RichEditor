@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 
 public class NoteDetailActivity extends BaseActivity {
+	private String mNoteTitle;
 	private String mNoteContent;
 	private LinearLayout mNoteDetailContent;
 	
@@ -17,6 +18,7 @@ public class NoteDetailActivity extends BaseActivity {
 		setContentView(R.layout.activity_note_detail);
 		
 		Intent intent = getIntent();
+		mNoteTitle = intent.getStringExtra("note_title");
 		mNoteContent = intent.getStringExtra("note_content");
 		
 		mNoteDetailContent = (LinearLayout) findViewById(R.id.note_detail_content);
