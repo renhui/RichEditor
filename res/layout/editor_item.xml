@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
     android:cursorVisible="true"
-    android:hint="inpu here"
+    android:hint="input here"
     android:lineSpacingExtra="10dp"
     android:textColor="#444"
     android:textCursorDrawable="@drawable/cursor_shape" >

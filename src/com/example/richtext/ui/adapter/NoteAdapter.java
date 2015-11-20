@@ -4,20 +4,18 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.richtext.R;
 import com.example.richtext.moudle.Note;
-import com.example.richtext.ui.widget.MixedTextView;
+import com.example.richtext.ui.activity.NoteDetailActivity;
 import com.example.richtext.utils.TimeUtils;
-import com.example.richtext.utils.ToastUtils;
 
 public class NoteAdapter extends BaseAdapter {
 
@@ -51,23 +49,40 @@ public class NoteAdapter extends BaseAdapter {
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.view_note, null);
-		}
-		LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.note_layer);
-		TextView title = (TextView) convertView.findViewById(R.id.note_title);
-		title.setText(mNoteList.get(position).title);
-		
-		TextView time = (TextView) convertView.findViewById(R.id.time);
-		time.setText(TimeUtils.getTime(mNoteList.get(position).modifyTime));
-		
-		ll.addView(new MixedTextView(mContext, mNoteList.get(position).content));
-		convertView.setOnClickListener(new OnClickListener() {
+			convertView.setTag(new NoteViewHolder(convertView));
 			
-			@Override
-			public void onClick(View v) {
-				ToastUtils.show(mNoteList.get(position).content);
-			}
-		});
-		return ll;
+		}
+		
+		NoteViewHolder holder = (NoteViewHolder) convertView.getTag();
+		holder.show(mNoteList.get(position));
+		return convertView;
+	}
+	
+	private class NoteViewHolder {
+		
+		private View mRootView;
+		private TextView mTitleView;
+		private TextView mTimeView;
+		
+		public NoteViewHolder(View rootView) {
+			mRootView = rootView;
+			mTitleView = (TextView) mRootView.findViewById(R.id.note_title);
+			mTimeView = (TextView) mRootView.findViewById(R.id.time);
+		}
+		
+		public void show(final Note note) {
+			mTitleView.setText(note.title);
+			mTimeView.setText(TimeUtils.getTime(note.modifyTime));
+			mRootView.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(mContext, NoteDetailActivity.class);
+					intent.putExtra("note_content", note.content);
+					mContext.startActivity(intent);
+				}
+			});
+		}
 	}
 
 }

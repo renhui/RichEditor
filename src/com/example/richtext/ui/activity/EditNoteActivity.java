@@ -79,7 +79,7 @@ public class EditNoteActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_edit_note);
 
 		Intent intent = getIntent();
 		mTitle = intent.getStringExtra("next_page_title");
