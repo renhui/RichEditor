@@ -26,7 +26,6 @@ import android.app.ActionBar;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -65,7 +64,11 @@ public class EditNoteActivity extends BaseActivity {
 	private static final File PHOTO_DIR = new File(
 			Environment.getExternalStorageDirectory() + "/DCIM/Camera");
 
-	private String mTitle;
+	private String mPageTitle;
+	
+	private String mNoteTitle;
+	private String mNoteContent;
+	private boolean mIsToEdit;
 
 	private ActionBar mActionBar;
 	private TextView mActionBarTitle;
@@ -82,8 +85,11 @@ public class EditNoteActivity extends BaseActivity {
 		setContentView(R.layout.activity_edit_note);
 
 		Intent intent = getIntent();
-		mTitle = intent.getStringExtra("next_page_title");
-
+		mPageTitle = intent.getStringExtra("next_page_title");
+		mNoteTitle = intent.getStringExtra("note_title");
+		mNoteContent = intent.getStringExtra("note_content");
+		mIsToEdit =intent.getBooleanExtra("to_edit", false);
+		
 		setUpActionBar();
 
 		mTitleEditor = (EditText) findViewById(R.id.editor_title);
@@ -136,7 +142,7 @@ public class EditNoteActivity extends BaseActivity {
 		mActionBarTitle.setGravity(Gravity.CENTER_VERTICAL);
 		mActionBarTitle.setClickable(true);
 		mActionBarTitle.setPadding(5, 0, 32, 0);
-		mActionBarTitle.setText(mTitle);
+		mActionBarTitle.setText(mPageTitle);
 		mActionBarTitle.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -144,6 +150,16 @@ public class EditNoteActivity extends BaseActivity {
 			}
 		});
 		mActionBar.setCustomView(mActionBarTitle);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+    	if (mIsToEdit) {
+			mTitleEditor.setText(mNoteTitle);
+		}
+		
 	}
 
 	@Override
