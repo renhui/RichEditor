@@ -4,6 +4,8 @@ import com.example.richtext.R;
 import com.example.richtext.ui.widget.MixedTextView;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils.TruncateAt;
@@ -21,23 +23,22 @@ public class NoteDetailActivity extends BaseActivity {
 	private ActionBar mActionBar;
 	private TextView mActionBarTitle;
 	private LinearLayout mNoteDetailContent;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_note_detail);
-		
+
 		Intent intent = getIntent();
 		mNoteTitle = intent.getStringExtra("note_title");
 		mNoteContent = intent.getStringExtra("note_content");
-		
+
 		setUpActionBar();
-		
+
 		mNoteDetailContent = (LinearLayout) findViewById(R.id.note_detail_content);
 		mNoteDetailContent.addView(new MixedTextView(this, mNoteContent));
 	}
-	
-	
+
 	/** 添加ActionBar */
 	private void setUpActionBar() {
 		mActionBar = getActionBar();
@@ -65,24 +66,35 @@ public class NoteDetailActivity extends BaseActivity {
 		});
 		mActionBar.setCustomView(mActionBarTitle);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.save_note_menu, menu);
 		View view = menu.findItem(R.id.item_save_note).getActionView();
 		TextView tv = (TextView) view.findViewById(R.id.save_note);
-		tv.setText("编辑");
+		tv.setText("重做");
 		tv.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(NoteDetailActivity.this, EditNoteActivity.class);
-				intent.putExtra("note_title", mNoteTitle);
-				intent.putExtra("note_content", mNoteContent);
-				intent.putExtra("to_edit", true);
-				intent.putExtra("next_page_title", "编辑便签");
-				startActivity(intent);
-				finish();
+				new AlertDialog.Builder(NoteDetailActivity.this)
+						.setMessage("是否要重新制作该便签(注：目前进去编辑界面后不会保留之前便签的内容 ^(*￣(oo)￣)^)")
+						.setPositiveButton("是",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										Intent intent = new Intent(NoteDetailActivity.this, EditNoteActivity.class);
+										intent.putExtra("note_title", mNoteTitle);
+										intent.putExtra("note_content", mNoteContent);
+										intent.putExtra("to_edit", true);
+										intent.putExtra("next_page_title", "编辑便签");
+										startActivity(intent);
+										finish();
+									}
+								})
+						.setNegativeButton("取消", null)
+						.show();
 			}
 		});
 		return super.onCreateOptionsMenu(menu);
