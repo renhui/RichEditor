@@ -21,6 +21,7 @@ import com.example.richtext.ui.widget.RichEditor;
 import com.example.richtext.ui.widget.handwriting.WritePadDialog;
 import com.example.richtext.ui.widget.handwriting.listener.WriteDialogListener;
 import com.example.richtext.utils.DebugTraceTool;
+import com.example.richtext.utils.ImageUtils;
 import com.example.richtext.utils.LongBlogContent;
 import com.example.richtext.utils.ToastUtils;
 
@@ -113,7 +114,6 @@ public class EditNoteActivity extends BaseActivity {
 				} else if (v.getId() == mBtn3.getId()) {
 //					 生成长微博
 //					newLongBlog();
-					
 					// 手画板
 					WritePadDialog mWritePadDialog = new WritePadDialog(EditNoteActivity.this, 
 						new WriteDialogListener() {
@@ -121,7 +121,8 @@ public class EditNoteActivity extends BaseActivity {
 							@Override
 							public void onPaintDone(Object object) {
 								Bitmap bitmap = (Bitmap) object;
-								ToastUtils.show(bitmap.getByteCount() +"...");
+								String path = ImageUtils.createSignFile(bitmap);
+								insertBitmap(path);
 							}
 						});
 					mWritePadDialog.show();
