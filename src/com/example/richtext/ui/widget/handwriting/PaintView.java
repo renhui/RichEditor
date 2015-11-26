@@ -34,7 +34,7 @@ public class PaintView extends View {
 		super(context);
 		
 		this.screenWidth = screenWidth;
-		this.screenHeight = screenHeight;
+		this.screenHeight = (int) (screenHeight * 0.9); // 微调画布的高度
 		init();
 	}
 	
@@ -87,7 +87,7 @@ public class PaintView extends View {
 	}
 	
 	public Bitmap getPaintBitmap() {
-		return resizeImage(mBitmap, 320, 480);
+		return resizeImage(mBitmap, 640, (int) (640 * ((float)screenHeight / (float)screenWidth)));
 	}
 	
 	public Path getPath() {

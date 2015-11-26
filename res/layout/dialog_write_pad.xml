@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -7,13 +7,14 @@
     <FrameLayout
         android:id="@+id/table_view"
         android:layout_width="match_parent"
-        android:background="#C3C3C3"
-        android:layout_height="300dp" >
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:background="#C3C3C3" >
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:background="@android:drawable/bottom_bar"
         android:paddingTop="4dp" >
 
@@ -39,4 +40,4 @@
             android:text="取消" />
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>
