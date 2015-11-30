@@ -71,6 +71,10 @@ public final class IoUtils {
 		}
 	}
 
+	/***
+	 * 静默关闭
+	 * @param closeable
+	 */
 	public static void closeSilently(Closeable closeable) {
 		if (closeable != null) {
 			try {

@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2011-2013 Sergey Tarasevich
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package com.example.richtext.imageloader.core.download;
 
 import com.example.richtext.imageloader.core.DisplayImageOptions;
@@ -22,26 +7,28 @@ import java.io.InputStream;
 import java.util.Locale;
 
 /**
- * Provides retrieving of {@link InputStream} of image by URI.<br />
- * Implementations have to be thread-safe.
+ * 提供通过URI获取图片的输入流
+ * 实现必须保证线程安全
  *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
- * @since 1.4.0
+ * @author renhui
  */
 public interface ImageDownloader {
 	/**
-	 * Retrieves {@link InputStream} of image by URI.
+	 * 通过URI获取图片的输入流
 	 *
-	 * @param imageUri Image URI
-	 * @param extra    Auxiliary object which was passed to {@link DisplayImageOptions.Builder#extraForDownloader(Object)
-	 *                 DisplayImageOptions.extraForDownloader(Object)}; can be null
-	 * @return {@link InputStream} of image
-	 * @throws IOException                   if some I/O error occurs during getting image stream
-	 * @throws UnsupportedOperationException if image URI has unsupported scheme(protocol)
+	 * @param imageUri 图片的URI
+	 * @param extra    辅助对象,通过{@link DisplayImageOptions.Builder#extraForDownloader(Object)
+	 *                 DisplayImageOptions.extraForDownloader(Object)}; 传递过来,可以为空
+	 * @return 图片的输入流{@link InputStream}
+	 * @throws IOException    如果获取图片输入流的时候发生一些I/O错误
+	 * @throws UnsupportedOperationException 如果图片的URI的方案(协议)不被支持
 	 */
 	InputStream getStream(String imageUri, Object extra) throws IOException;
 
-	/** Represents supported schemes(protocols) of URI. Provides convenient methods for work with schemes and URIs. */
+	/** 
+	 * 列举了支持的URI的协议(方案)。
+	 * 提供了相应的方案来使用这些URI相关的协议(方案)
+	 */
 	public enum Scheme {
 		HTTP("http"), HTTPS("https"), FILE("file"), CONTENT("content"), ASSETS("assets"), DRAWABLE("drawable"), UNKNOWN("");
 
@@ -54,13 +41,14 @@ public interface ImageDownloader {
 		}
 
 		/**
-		 * Defines scheme of incoming URI
+		 * 定义输入的URI的方案
 		 *
-		 * @param uri URI for scheme detection
-		 * @return Scheme of incoming URI
+		 * @param uri 要输入的URI
+		 * @return 当前URI使用的Scheme
 		 */
 		public static Scheme ofUri(String uri) {
 			if (uri != null) {
+				// 枚举遍历所有的Scheme, 返回当前uri的Scheme
 				for (Scheme s : values()) {
 					if (s.belongsTo(uri)) {
 						return s;
@@ -74,12 +62,12 @@ public interface ImageDownloader {
 			return uri.toLowerCase(Locale.US).startsWith(uriPrefix);
 		}
 
-		/** Appends scheme to incoming path */
+		/** 将scheme添加到输入的路径里面 */
 		public String wrap(String path) {
 			return uriPrefix + path;
 		}
 
-		/** Removed scheme part ("scheme://") from incoming URI */
+		/** 从输入的URI里面移除Scheme部分 */
 		public String crop(String uri) {
 			if (!belongsTo(uri)) {
 				throw new IllegalArgumentException(String.format("URI [%1$s] doesn't have expected scheme [%2$s]", uri, scheme));

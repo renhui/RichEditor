@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2011-2014 Sergey Tarasevich
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package com.example.richtext.imageloader.core;
 
 import android.graphics.Bitmap;
@@ -40,11 +25,10 @@ import com.example.richtext.imageloader.utils.L;
 import com.example.richtext.imageloader.utils.MemoryCacheUtils;
 
 /**
- * Singletone for image loading and displaying at {@link ImageView ImageViews}<br />
- * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before any other method.
+ * Image加载和在{@link ImageView}展示的单例
+ * 注意： 在调用任何一个方法之前必须要先调用{@link #init(ImageLoaderConfiguration)}
  *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
- * @since 1.0.0
+ * @author renhui
  */
 public class ImageLoader {
 
@@ -66,7 +50,8 @@ public class ImageLoader {
 
 	private volatile static ImageLoader instance;
 
-	/** Returns singleton class instance */
+	/** 返回单例类对象
+	 *  注：使用了双重所的机制,提高了效率  */
 	public static ImageLoader getInstance() {
 		if (instance == null) {
 			synchronized (ImageLoader.class) {
@@ -82,17 +67,19 @@ public class ImageLoader {
 	}
 
 	/**
-	 * Initializes ImageLoader instance with configuration.<br />
-	 * If configurations was set before ( {@link #isInited()} == true) then this method does nothing.<br />
-	 * To force initialization with new configuration you should {@linkplain #destroy() destroy ImageLoader} at first.
+	 * 根据配置来初始化ImageLoader的实例
+	 * 如果配置内容在({@link #isInited()} == true) 之前已经被设置了,那么这个方法会不会做任何事情
+	 * 如果需要强制使用新的配置来进行初始化，你需要先通过{@linkplain #destroy()}方法 destroy掉ImageLoader.
 	 *
 	 * @param configuration {@linkplain ImageLoaderConfiguration ImageLoader configuration}
-	 * @throws IllegalArgumentException if <b>configuration</b> parameter is null
+	 * @throws IllegalArgumentException 如果传递进来的配置参数为空
 	 */
 	public synchronized void init(ImageLoaderConfiguration configuration) {
+		// 先判断传递进来的配置参数是否为空,为空抛出异常
 		if (configuration == null) {
 			throw new IllegalArgumentException(ERROR_INIT_CONFIG_WITH_NULL);
 		}
+		// 判断是否已经初始化过
 		if (this.configuration == null) {
 			L.d(LOG_INIT_CONFIG);
 			engine = new ImageLoaderEngine(configuration);
@@ -102,10 +89,7 @@ public class ImageLoader {
 		}
 	}
 
-	/**
-	 * Returns <b>true</b> - if ImageLoader {@linkplain #init(ImageLoaderConfiguration) is initialized with
-	 * configuration}; <b>false</b> - otherwise
-	 */
+	/** 判断ImageLoader是否初始化过,通过判断configuration参数是否已经配赋值 */
 	public boolean isInited() {
 		return configuration != null;
 	}
@@ -184,8 +168,8 @@ public class ImageLoader {
 	}
 
 	/**
-	 * Adds display image task to execution pool. Image will be set to ImageAware when it's turn.<br />
-	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
+	 * 添加一个展示图片的任务到执行池.当任务执行完成后会被放置到ImageAware里面.
+	 * 注意：在调用此方法之前必须要调用{@link #init(ImageLoaderConfiguration)}方法
 	 *
 	 * @param uri              Image URI (i.e. "http://site.com/image.png", "file:///mnt/sdcard/image.png")
 	 * @param imageAware       {@linkplain com.example.richtext.imageloader.core.imageaware.ImageAware Image aware view}
@@ -534,8 +518,8 @@ public class ImageLoader {
 	}
 
 	/**
-	 * Loads and decodes image synchronously.<br />
-	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
+	 * 同步加载和解码图片
+	 * 注意： 在调用此方法之前一定要确定{@link #init(ImageLoaderConfiguration)}方法别调用了
 	 *
 	 * @param uri             Image URI (i.e. "http://site.com/image.png", "file:///mnt/sdcard/image.png")
 	 * @param targetImageSize Minimal size for {@link Bitmap} which will be returned. Downloaded image will be decoded
@@ -549,9 +533,12 @@ public class ImageLoader {
 	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 */
 	public Bitmap loadImageSync(String uri, ImageSize targetImageSize, DisplayImageOptions options) {
+		// 如果没有设定Image加载时的options,则采用默认的options
 		if (options == null) {
 			options = configuration.defaultDisplayImageOptions;
 		}
+		
+		// 将options的syncLoading置为true
 		options = new DisplayImageOptions.Builder().cloneFrom(options).syncLoading(true).build();
 
 		SyncImageLoadingListener listener = new SyncImageLoadingListener();
@@ -560,9 +547,9 @@ public class ImageLoader {
 	}
 
 	/**
-	 * Checks if ImageLoader's configuration was initialized
+	 * 检测ImageLoader的配置参数是否已经初始化了
 	 *
-	 * @throws IllegalStateException if configuration wasn't initialized
+	 * @throws IllegalStateException 如果没有初始化抛出此异常
 	 */
 	private void checkConfiguration() {
 		if (configuration == null) {
@@ -570,15 +557,15 @@ public class ImageLoader {
 		}
 	}
 
-	/** Sets a default loading listener for all display and loading tasks. */
+	/** 针对所有的加载和展示的任务设置默认的加载监听 */
 	public void setDefaultLoadingListener(ImageLoadingListener listener) {
 		defaultListener = listener == null ? new SimpleImageLoadingListener() : listener;
 	}
 
 	/**
-	 * Returns memory cache
+	 * 返回内存缓存对象
 	 *
-	 * @throws IllegalStateException if {@link #init(ImageLoaderConfiguration)} method wasn't called before
+	 * @throws IllegalStateException 如果之前没有过初始化则抛出此错误
 	 */
 	public MemoryCache getMemoryCache() {
 		checkConfiguration();
@@ -748,10 +735,9 @@ public class ImageLoader {
 	}
 
 	/**
-	 * Listener which is designed for synchronous image loading.
-	 *
-	 * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
-	 * @since 1.9.0
+	 * 为同步加载image设计的监听
+	 * 此类的设计就是为了在图片加载完成后能够拿到Bitmap对象
+	 * @author renhui
 	 */
 	private static class SyncImageLoadingListener extends SimpleImageLoadingListener {
 
