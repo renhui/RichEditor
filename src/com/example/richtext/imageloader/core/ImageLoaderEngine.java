@@ -1,27 +1,11 @@
-/*******************************************************************************
- * Copyright 2011-2014 Sergey Tarasevich
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package com.example.richtext.imageloader.core;
 
+import android.annotation.SuppressLint;
 import android.view.View;
-
 import com.example.richtext.imageloader.core.assist.FailReason;
 import com.example.richtext.imageloader.core.assist.FlushedInputStream;
 import com.example.richtext.imageloader.core.imageaware.ImageAware;
 import com.example.richtext.imageloader.core.listener.ImageLoadingListener;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,23 +17,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * {@link ImageLoader} engine which responsible for {@linkplain LoadAndDisplayImageTask display task} execution.
+ * 图片加载引擎 --- 负责图片展示任务的运行
  *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
- * @since 1.7.1
+ * @author renhui
  */
+@SuppressLint("UseSparseArrays")
 class ImageLoaderEngine {
 
 	final ImageLoaderConfiguration configuration;
 
-	private Executor taskExecutor;
-	private Executor taskExecutorForCachedImages;
-	private Executor taskDistributor;
+	private Executor taskExecutor;    // 任务执行器   
+	private Executor taskExecutorForCachedImages;	// 缓存图像的任务执行器
+	private Executor taskDistributor;	// 任务分发者
 
-	private final Map<Integer, String> cacheKeysForImageAwares = Collections
-			.synchronizedMap(new HashMap<Integer, String>());
+	private final Map<Integer, String> cacheKeysForImageAwares = Collections.synchronizedMap(new HashMap<Integer, String>());
 	private final Map<String, ReentrantLock> uriLocks = new WeakHashMap<String, ReentrantLock>();
 
+	// 线程安全的状态标识
 	private final AtomicBoolean paused = new AtomicBoolean(false);
 	private final AtomicBoolean networkDenied = new AtomicBoolean(false);
 	private final AtomicBoolean slowNetwork = new AtomicBoolean(false);
@@ -65,7 +49,7 @@ class ImageLoaderEngine {
 		taskDistributor = DefaultConfigurationFactory.createTaskDistributor();
 	}
 
-	/** Submits task to execution pool */
+	/** 向线程池提交任务 */
 	void submit(final LoadAndDisplayImageTask task) {
 		taskDistributor.execute(new Runnable() {
 			@Override

@@ -701,20 +701,17 @@ public class ImageLoader {
 	}
 
 	/**
-	 * Cancels all running and scheduled display image tasks.<br />
-	 * <b>NOTE:</b> This method doesn't shutdown
-	 * {@linkplain com.example.richtext.imageloader.core.ImageLoaderConfiguration.Builder#taskExecutor(java.util.concurrent.Executor)
-	 * custom task executors} if you set them.<br />
-	 * ImageLoader still can be used after calling this method.
+	 * 取消所有正在运行或者计划中的展示图片的任务.
+	 * 注: 这个方法不会关闭 {@linkplain ImageLoaderConfiguration.Builder#taskExecutor 自定义的任务执行者},如果你对此进行了设置.
+	 * 在调用这个方法后ImageLoader还能够被继续调用.
 	 */
 	public void stop() {
 		engine.stop();
 	}
 
 	/**
-	 * {@linkplain #stop() Stops ImageLoader} and clears current configuration. <br />
-	 * You can {@linkplain #init(ImageLoaderConfiguration) init} ImageLoader with new configuration after calling this
-	 * method.
+	 * 调用{@linkplain #stop()}停止ImageLoader然后清除当前所有的配置
+	 * 在调用此方法之后,你可以调用{@linkplain #init(ImageLoaderConfiguration)}来使用新配置来初始化ImageLoader.
 	 */
 	public void destroy() {
 		if (configuration != null) L.d(LOG_DESTROY);

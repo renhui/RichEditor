@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2014 Sergey Tarasevich
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package com.example.richtext.imageloader.cache.memory;
 
 import android.graphics.Bitmap;
@@ -20,29 +5,27 @@ import android.graphics.Bitmap;
 import java.util.Collection;
 
 /**
- * Interface for memory cache
+ * 接口--内存缓存
  *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
- * @since 1.9.2
+ * @author renhui
  */
 public interface MemoryCache {
 	/**
-	 * Puts value into cache by key
+	 * 通过键值对的方式放入缓存中
 	 *
-	 * @return <b>true</b> - if value was put into cache successfully, <b>false</b> - if value was <b>not</b> put into
-	 * cache
+	 * @return <b>true</b> - 如果成功放置键值对到缓存中, <b>false</b> - 如果没有放置到缓存中
 	 */
 	boolean put(String key, Bitmap value);
 
-	/** Returns value by key. If there is no value for key then null will be returned. */
+	/** 根据键返回值. 如果没有此键的值则返回null. */
 	Bitmap get(String key);
 
-	/** Removes item by key */
+	/** 根据key移除内容 */
 	Bitmap remove(String key);
 
-	/** Returns all keys of cache */
+	/** 返回缓存中的所有的键 */
 	Collection<String> keys();
 
-	/** Remove all items from cache */
+	/** 从缓存中移除所有的内容 */
 	void clear();
 }

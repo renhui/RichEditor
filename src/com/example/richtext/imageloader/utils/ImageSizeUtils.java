@@ -25,10 +25,9 @@ import com.example.richtext.imageloader.core.imageaware.ImageAware;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * Provides calculations with image sizes, scales
+ * 提供图像的大小的计算方式以及缩放的方式
  *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
- * @since 1.8.3
+ * @author renhui
  */
 public final class ImageSizeUtils {
 
@@ -47,9 +46,8 @@ public final class ImageSizeUtils {
 	}
 
 	/**
-	 * Defines target size for image aware view. Size is defined by target
-	 * {@link com.example.richtext.imageloader.core.imageaware.ImageAware view} parameters, configuration
-	 * parameters or device display dimensions.<br />
+	 * 定义图片视图的大小. 尺寸被目标 {@link com.example.richtext.imageloader.core.imageaware.ImageAware}
+	 * 参数、配置参数或者设备显示的尺寸定义.
 	 */
 	public static ImageSize defineTargetSizeForView(ImageAware imageAware, ImageSize maxImageSize) {
 		int width = imageAware.getWidth();
@@ -62,12 +60,10 @@ public final class ImageSizeUtils {
 	}
 
 	/**
-	 * Computes sample size for downscaling image size (<b>srcSize</b>) to view size (<b>targetSize</b>). This sample
-	 * size is used during
-	 * {@linkplain BitmapFactory#decodeStream(java.io.InputStream, android.graphics.Rect, android.graphics.BitmapFactory.Options)
-	 * decoding image} to bitmap.<br />
-	 * <br />
-	 * <b>Examples:</b><br />
+	 * 计算样本尺寸去缩放Image的尺寸来匹配view的尺寸.
+	 * 这个缩放的样板会在{@linkplain BitmapFactory#decodeStream}将图片转换到bitmap使用.
+	 *
+	 * <b>样例:</b><br />
 	 * <p/>
 	 * <pre>
 	 * srcSize(100x100), targetSize(10x10), powerOf2Scale = true -> sampleSize = 8
@@ -144,13 +140,11 @@ public final class ImageSizeUtils {
 	}
 
 	/**
-	 * Computes minimal sample size for downscaling image so result image size won't exceed max acceptable OpenGL
-	 * texture size.<br />
-	 * We can't create Bitmap in memory with size exceed max texture size (usually this is 2048x2048) so this method
-	 * calculate minimal sample size which should be applied to image to fit into these limits.
+	 * 计算最小的缩放的样本尺寸，这样图片的尺寸才不会OpenGL可处理的最大尺寸.
+	 * 不能创建超过2048x2048尺寸的Bitmap,所以需要计算最小的缩放的样本尺寸来适应这些限制.
 	 *
-	 * @param srcSize Original image size
-	 * @return Minimal sample size
+	 * @param srcSize 原始的图片尺寸
+	 * @return 最小的样本尺寸
 	 */
 	public static int computeMinImageSampleSize(ImageSize srcSize) {
 		final int srcWidth = srcSize.getWidth();
@@ -165,11 +159,9 @@ public final class ImageSizeUtils {
 	}
 
 	/**
-	 * Computes scale of target size (<b>targetSize</b>) to source size (<b>srcSize</b>).<br />
-	 * <br />
-	 * <b>Examples:</b><br />
+	 * 计算从源尺寸到目标尺寸需要缩放的倍数.
+	 * <b>示例:</b><br />
 	 * <p/>
-	 * <pre>
 	 * srcSize(40x40), targetSize(10x10) -> scale = 0.25
 	 *
 	 * srcSize(10x10), targetSize(20x20), stretch = false -> scale = 1
@@ -177,14 +169,12 @@ public final class ImageSizeUtils {
 	 *
 	 * srcSize(100x100), targetSize(20x40), viewScaleType = FIT_INSIDE -> scale = 0.2
 	 * srcSize(100x100), targetSize(20x40), viewScaleType = CROP       -> scale = 0.4
-	 * </pre>
 	 *
-	 * @param srcSize       Source (image) size
-	 * @param targetSize    Target (view) size
-	 * @param viewScaleType {@linkplain ViewScaleType Scale type} for placing image in view
-	 * @param stretch       Whether source size should be stretched if target size is larger than source size. If <b>false</b>
-	 *                      then result scale value can't be greater than 1.
-	 * @return Computed scale
+	 * @param srcSize       源Image尺寸
+	 * @param targetSize    目标Image尺寸
+	 * @param viewScaleType {@linkplain ViewScaleType Scale type}在view里面放置image的方式.
+	 * @param stretch      如果目标尺寸比源尺寸大的时候是否需要拉伸
+	 * @return 计算后得到的缩放的倍数值
 	 */
 	public static float computeImageScale(ImageSize srcSize, ImageSize targetSize, ViewScaleType viewScaleType,
 			boolean stretch) {

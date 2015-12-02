@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2011-2014 Sergey Tarasevich
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package com.example.richtext.imageloader.core;
 
 import android.graphics.Bitmap;
@@ -41,13 +26,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Presents load'n'display image task. Used to load image from Internet or file system, decode it to {@link Bitmap}, and
- * display it in {@link com.example.richtext.imageloader.core.imageaware.ImageAware} using {@link DisplayBitmapTask}.
+ * 加载和展示图片的任务. 此任务可以用来加载图片(网络、文件系统)为Bitmap,
+ * 然后使用 {@link DisplayBitmapTask}展示在ImageAware上面
  *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
+ * @author renhui
  * @see ImageLoaderConfiguration
  * @see ImageLoadingInfo
- * @since 1.3.1
  */
 final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 
@@ -177,9 +161,14 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		runTask(displayBitmapTask, syncLoading, handler, engine);
 	}
 
-	/** @return <b>true</b> - if task should be interrupted; <b>false</b> - otherwise */
+	/**
+	 * // TODO  还是有点不清楚下面的pause到底有什么用
+	 * 判断当前的任务是否暂停了,需要等待 
+	 * @return true - 如果任务需要立即打断; false - 如果不需要打断任务 
+	 */
 	private boolean waitIfPaused() {
-		AtomicBoolean pause = engine.getPause();
+		// 图片加载引擎是否已经暂停
+		AtomicBoolean pause = engine.getPause();  
 		if (pause.get()) {
 			synchronized (engine.getPauseLock()) {
 				if (pause.get()) {

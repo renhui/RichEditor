@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2011-2013 Sergey Tarasevich
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package com.example.richtext.imageloader.core;
 
 import com.example.richtext.imageloader.core.assist.ImageSize;
@@ -23,24 +8,30 @@ import com.example.richtext.imageloader.core.listener.ImageLoadingProgressListen
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Information for load'n'display image task
+ * 加载和展示图片的任务的信息
  *
- * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
+ * @author renhui
  * @see com.example.richtext.imageloader.utils.MemoryCacheUtils
  * @see DisplayImageOptions
  * @see ImageLoadingListener
  * @see com.example.richtext.imageloader.core.listener.ImageLoadingProgressListener
- * @since 1.3.1
  */
 final class ImageLoadingInfo {
-
-	final String uri;
+	/**图片的uri */
+	final String uri;   
+	/**图片缓存键 */
 	final String memoryCacheKey;
+	/**图片展示控件 {@link ImageAware} */
 	final ImageAware imageAware;
+	/**图片尺寸信息{@link ImageSize} */
 	final ImageSize targetSize;
+	/**图片展示时的参数 */
 	final DisplayImageOptions options;
+	/**图片加载时的监听 */
 	final ImageLoadingListener listener;
+	/**图片加载过程的监听 */
 	final ImageLoadingProgressListener progressListener;
+	/**图片加载时的uri锁 */
 	final ReentrantLock loadFromUriLock;
 
 	public ImageLoadingInfo(String uri, ImageAware imageAware, ImageSize targetSize, String memoryCacheKey,
