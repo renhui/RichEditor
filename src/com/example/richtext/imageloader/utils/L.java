@@ -19,41 +19,6 @@ public final class L {
 	private L() {
 	}
 
-	/**
-	 * Enables logger (if {@link #disableLogging()} was called before)
-	 *
-	 * @deprecated Use {@link #writeLogs(boolean) writeLogs(true)} instead
-	 */
-	@Deprecated
-	public static void enableLogging() {
-		writeLogs(true);
-	}
-
-	/**
-	 * Disables logger, no logs will be passed to LogCat, all log methods will do nothing
-	 *
-	 * @deprecated Use {@link #writeLogs(boolean) writeLogs(false)} instead
-	 */
-	@Deprecated
-	public static void disableLogging() {
-		writeLogs(false);
-	}
-
-	/**
-	 * Enables/disables detail logging of {@link ImageLoader} work.
-	 * Consider {@link com.example.richtext.imageloader.utils.L#disableLogging()} to disable
-	 * ImageLoader logging completely (even error logs)<br />
-	 * Debug logs are disabled by default.
-	 */
-	public static void writeDebugLogs(boolean writeDebugLogs) {
-		L.writeDebugLogs = writeDebugLogs;
-	}
-
-	/** Enables/disables logging of {@link ImageLoader} completely (even error logs). */
-	public static void writeLogs(boolean writeLogs) {
-		L.writeLogs = writeLogs;
-	}
-
 	public static void d(String message, Object... args) {
 		if (writeDebugLogs) {
 			log(Log.DEBUG, null, message, args);
@@ -94,6 +59,25 @@ public final class L {
 			String logBody = Log.getStackTraceString(ex);
 			log = String.format(LOG_FORMAT, logMessage, logBody);
 		}
-		Log.println(priority, ImageLoader.TAG, log);
+		
+		switch (priority) {
+		case Log.VERBOSE:
+			Log.v(ImageLoader.TAG, log);
+			break;
+		case Log.DEBUG:
+			Log.e(ImageLoader.TAG, log);
+			break;
+		case Log.INFO:
+			Log.i(ImageLoader.TAG, log);
+			break;
+		case Log.WARN:
+			Log.w(ImageLoader.TAG, log);
+			break;
+		case Log.ERROR:
+			Log.e(ImageLoader.TAG, log);
+			break;
+		default:
+			break;
+		}
 	}
 }

@@ -20,7 +20,9 @@ public class MyApplication extends Application {
 		DebugTraceTool.debugTraceE(this, "application onCreate");
 		
 		// 初始化图片加载控件
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+		ImageLoaderConfiguration config = 
+				new ImageLoaderConfiguration.Builder(this)
+										.build();
 		ImageLoader.getInstance().init(config);
 	}
 	

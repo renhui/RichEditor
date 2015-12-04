@@ -28,6 +28,9 @@ import com.example.richtext.imageloader.utils.MemoryCacheUtils;
  * Image加载和在{@link ImageView}展示的单例
  * 注意： 在调用任何一个方法之前必须要先调用{@link #init(ImageLoaderConfiguration)}
  *
+ * 下面介绍的是整个类很多方法使用到的参数的意义:
+ * {@linkplain uri} 图片的URI(i.e. "http://site.com/image.png", "file:///mnt/sdcard/image.png")
+ * {@linkplain imageAware} 
  * @author renhui
  */
 public class ImageLoader {

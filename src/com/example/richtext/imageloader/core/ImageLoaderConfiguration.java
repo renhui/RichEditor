@@ -97,7 +97,6 @@ public final class ImageLoaderConfiguration {
 		networkDeniedDownloader = new NetworkDeniedImageDownloader(downloader);
 		slowNetworkDownloader = new SlowNetworkImageDownloader(downloader);
 
-		L.writeDebugLogs(builder.writeLogs);
 	}
 
 	/**
