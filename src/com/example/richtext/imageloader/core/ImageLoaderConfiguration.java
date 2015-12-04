@@ -28,7 +28,6 @@ import com.example.richtext.imageloader.core.assist.ImageSize;
 import com.example.richtext.imageloader.core.assist.QueueProcessingType;
 import com.example.richtext.imageloader.core.decode.ImageDecoder;
 import com.example.richtext.imageloader.core.download.ImageDownloader;
-import com.example.richtext.imageloader.core.process.BitmapProcessor;
 import com.example.richtext.imageloader.utils.L;
 import com.example.richtext.imageloader.utils.MemoryCacheUtils;
 
@@ -56,7 +55,6 @@ public final class ImageLoaderConfiguration {
 	final int maxImageHeightForMemoryCache;
 	final int maxImageWidthForDiskCache;
 	final int maxImageHeightForDiskCache;
-	final BitmapProcessor processorForDiskCache;
 
 	final Executor taskExecutor;
 	final Executor taskExecutorForCachedImages;
@@ -82,7 +80,6 @@ public final class ImageLoaderConfiguration {
 		maxImageHeightForMemoryCache = builder.maxImageHeightForMemoryCache;
 		maxImageWidthForDiskCache = builder.maxImageWidthForDiskCache;
 		maxImageHeightForDiskCache = builder.maxImageHeightForDiskCache;
-		processorForDiskCache = builder.processorForDiskCache;
 		taskExecutor = builder.taskExecutor;
 		taskExecutorForCachedImages = builder.taskExecutorForCachedImages;
 		threadPoolSize = builder.threadPoolSize;
@@ -168,7 +165,6 @@ public final class ImageLoaderConfiguration {
 		private int maxImageHeightForMemoryCache = 0;
 		private int maxImageWidthForDiskCache = 0;
 		private int maxImageHeightForDiskCache = 0;
-		private BitmapProcessor processorForDiskCache = null;
 
 		private Executor taskExecutor = null;
 		private Executor taskExecutorForCachedImages = null;
@@ -217,9 +213,8 @@ public final class ImageLoaderConfiguration {
 		 * instead
 		 */
 		@Deprecated
-		public Builder discCacheExtraOptions(int maxImageWidthForDiskCache, int maxImageHeightForDiskCache,
-				BitmapProcessor processorForDiskCache) {
-			return diskCacheExtraOptions(maxImageWidthForDiskCache, maxImageHeightForDiskCache, processorForDiskCache);
+		public Builder discCacheExtraOptions(int maxImageWidthForDiskCache, int maxImageHeightForDiskCache) {
+			return diskCacheExtraOptions(maxImageWidthForDiskCache, maxImageHeightForDiskCache);
 		}
 
 		/**
@@ -230,11 +225,9 @@ public final class ImageLoaderConfiguration {
 		 * @param maxImageHeightForDiskCache Maximum height of downloaded images for saving at disk cache
 		 * @param processorForDiskCache      null-ok; {@linkplain BitmapProcessor Bitmap processor} which process images before saving them in disc cache
 		 */
-		public Builder diskCacheExtraOptions(int maxImageWidthForDiskCache, int maxImageHeightForDiskCache,
-				BitmapProcessor processorForDiskCache) {
+		public Builder diskCacheExtraOptions(int maxImageWidthForDiskCache, int maxImageHeightForDiskCache) {
 			this.maxImageWidthForDiskCache = maxImageWidthForDiskCache;
 			this.maxImageHeightForDiskCache = maxImageHeightForDiskCache;
-			this.processorForDiskCache = processorForDiskCache;
 			return this;
 		}
 

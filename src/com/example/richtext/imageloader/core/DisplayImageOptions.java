@@ -26,7 +26,6 @@ import com.example.richtext.imageloader.core.display.BitmapDisplayer;
 import com.example.richtext.imageloader.core.display.SimpleBitmapDisplayer;
 import com.example.richtext.imageloader.core.download.ImageDownloader;
 import com.example.richtext.imageloader.core.listener.ImageLoadingListener;
-import com.example.richtext.imageloader.core.process.BitmapProcessor;
 
 /**
  * Contains options for image display. Defines:
@@ -79,8 +78,6 @@ public final class DisplayImageOptions {
 	private final int delayBeforeLoading;
 	private final boolean considerExifParams;
 	private final Object extraForDownloader;
-	private final BitmapProcessor preProcessor;
-	private final BitmapProcessor postProcessor;
 	private final BitmapDisplayer displayer;
 	private final Handler handler;
 	private final boolean isSyncLoading;
@@ -100,8 +97,6 @@ public final class DisplayImageOptions {
 		delayBeforeLoading = builder.delayBeforeLoading;
 		considerExifParams = builder.considerExifParams;
 		extraForDownloader = builder.extraForDownloader;
-		preProcessor = builder.preProcessor;
-		postProcessor = builder.postProcessor;
 		displayer = builder.displayer;
 		handler = builder.handler;
 		isSyncLoading = builder.isSyncLoading;
@@ -117,14 +112,6 @@ public final class DisplayImageOptions {
 
 	public boolean shouldShowImageOnFail() {
 		return imageOnFail != null || imageResOnFail != 0;
-	}
-
-	public boolean shouldPreProcess() {
-		return preProcessor != null;
-	}
-
-	public boolean shouldPostProcess() {
-		return postProcessor != null;
 	}
 
 	public boolean shouldDelayBeforeLoading() {
@@ -175,14 +162,6 @@ public final class DisplayImageOptions {
 		return extraForDownloader;
 	}
 
-	public BitmapProcessor getPreProcessor() {
-		return preProcessor;
-	}
-
-	public BitmapProcessor getPostProcessor() {
-		return postProcessor;
-	}
-
 	public BitmapDisplayer getDisplayer() {
 		return displayer;
 	}
@@ -215,8 +194,6 @@ public final class DisplayImageOptions {
 		private int delayBeforeLoading = 0;
 		private boolean considerExifParams = false;
 		private Object extraForDownloader = null;
-		private BitmapProcessor preProcessor = null;
-		private BitmapProcessor postProcessor = null;
 		private BitmapDisplayer displayer = DefaultConfigurationFactory.createBitmapDisplayer();
 		private Handler handler = null;
 		private boolean isSyncLoading = false;
@@ -418,26 +395,6 @@ public final class DisplayImageOptions {
 		}
 
 		/**
-		 * Sets bitmap processor which will be process bitmaps before they will be cached in memory. So memory cache
-		 * will contain bitmap processed by incoming preProcessor.<br />
-		 * Image will be pre-processed even if caching in memory is disabled.
-		 */
-		public Builder preProcessor(BitmapProcessor preProcessor) {
-			this.preProcessor = preProcessor;
-			return this;
-		}
-
-		/**
-		 * Sets bitmap processor which will be process bitmaps before they will be displayed in
-		 * {@link com.example.richtext.imageloader.core.imageaware.ImageAware image aware view} but
-		 * after they'll have been saved in memory cache.
-		 */
-		public Builder postProcessor(BitmapProcessor postProcessor) {
-			this.postProcessor = postProcessor;
-			return this;
-		}
-
-		/**
 		 * Sets custom {@link BitmapDisplayer displayer} for image loading task. Default value -
 		 * {@link DefaultConfigurationFactory#createBitmapDisplayer()}
 		 */
@@ -477,8 +434,6 @@ public final class DisplayImageOptions {
 			delayBeforeLoading = options.delayBeforeLoading;
 			considerExifParams = options.considerExifParams;
 			extraForDownloader = options.extraForDownloader;
-			preProcessor = options.preProcessor;
-			postProcessor = options.postProcessor;
 			displayer = options.displayer;
 			handler = options.handler;
 			isSyncLoading = options.isSyncLoading;

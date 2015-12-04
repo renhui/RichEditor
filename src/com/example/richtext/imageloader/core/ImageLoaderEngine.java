@@ -66,12 +66,6 @@ class ImageLoaderEngine {
 		});
 	}
 
-	/** Submits task to execution pool */
-	void submit(ProcessAndDisplayImageTask task) {
-		initExecutorsIfNeed();
-		taskExecutorForCachedImages.execute(task);
-	}
-
 	private void initExecutorsIfNeed() {
 		if (!configuration.customExecutor && ((ExecutorService) taskExecutor).isShutdown()) {
 			taskExecutor = createTaskExecutor();

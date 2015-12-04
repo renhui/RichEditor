@@ -222,21 +222,8 @@ public class ImageLoader {
 		Bitmap bmp = configuration.memoryCache.get(memoryCacheKey);
 		if (bmp != null && !bmp.isRecycled()) {
 			L.d(LOG_LOAD_IMAGE_FROM_MEMORY_CACHE, memoryCacheKey);
-
-			if (options.shouldPostProcess()) {
-				ImageLoadingInfo imageLoadingInfo = new ImageLoadingInfo(uri, imageAware, targetSize, memoryCacheKey,
-						options, listener, progressListener, engine.getLockForUri(uri));
-				ProcessAndDisplayImageTask displayTask = new ProcessAndDisplayImageTask(engine, bmp, imageLoadingInfo,
-						defineHandler(options));
-				if (options.isSyncLoading()) {
-					displayTask.run();
-				} else {
-					engine.submit(displayTask);
-				}
-			} else {
-				options.getDisplayer().display(bmp, imageAware, LoadedFrom.MEMORY_CACHE);
-				listener.onLoadingComplete(uri, imageAware.getWrappedView(), bmp);
-			}
+			options.getDisplayer().display(bmp, imageAware, LoadedFrom.MEMORY_CACHE);
+			listener.onLoadingComplete(uri, imageAware.getWrappedView(), bmp);
 		} else {
 			if (options.shouldShowImageOnLoading()) {
 				imageAware.setImageDrawable(options.getImageOnLoading(configuration.resources));
