@@ -102,9 +102,12 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 
 	@Override
 	public void run() {
+		// 判断任务是否中断了,如果中断了则不再继续
 		if (waitIfPaused()) return;
+		// 延时加载,如果进程sleep的时候被中断,则结束此任务,不再继续执行
 		if (delayIfNeed()) return;
 
+		// 对加载的uri进行加锁处理
 		ReentrantLock loadFromUriLock = imageLoadingInfo.loadFromUriLock;
 		L.d(LOG_START_DISPLAY_IMAGE_TASK, memoryCacheKey);
 		if (loadFromUriLock.isLocked()) {
@@ -112,11 +115,17 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		}
 
 		loadFromUriLock.lock();
+		
 		Bitmap bmp;
 		try {
+			
+			// 再次检查当前任务是不是还需要继续执行
 			checkTaskNotActual();
 
+			// 先去内存的缓存里面拿
 			bmp = configuration.memoryCache.get(memoryCacheKey);
+			
+			// 如果没有或者内存缓存的内容被回收掉了
 			if (bmp == null || bmp.isRecycled()) {
 				bmp = tryLoadBitmap();
 				if (bmp == null) return; // listener callback already was fired
@@ -137,10 +146,12 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 					configuration.memoryCache.put(memoryCacheKey, bmp);
 				}
 			} else {
+				// 已经获得bmp, 设定LoadedFrom--内存缓存
 				loadedFrom = LoadedFrom.MEMORY_CACHE;
 				L.d(LOG_GET_IMAGE_FROM_MEMORY_CACHE_AFTER_WAITING, memoryCacheKey);
 			}
 
+			// 判断是否需要再对bmp做处理，如果需要进行处理
 			if (bmp != null && options.shouldPostProcess()) {
 				L.d(LOG_POSTPROCESS_IMAGE, memoryCacheKey);
 				bmp = options.getPostProcessor().process(bmp);
@@ -164,7 +175,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 	/**
 	 * // TODO  还是有点不清楚下面的pause到底有什么用
 	 * 判断当前的任务是否暂停了,需要等待 
-	 * @return true - 如果任务需要立即打断; false - 如果不需要打断任务 
+	 * @return true - 如果任务需要立即中断; false - 如果不需要中断任务 
 	 */
 	private boolean waitIfPaused() {
 		// 图片加载引擎是否已经暂停
@@ -174,6 +185,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 				if (pause.get()) {
 					L.d(LOG_WAITING_FOR_RESUME, memoryCacheKey);
 					try {
+						// TODO 做的什么事情？？？？？？
 						engine.getPauseLock().wait();
 					} catch (InterruptedException e) {
 						L.e(LOG_TASK_INTERRUPTED, memoryCacheKey);
@@ -186,7 +198,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return isTaskNotActual();
 	}
 
-	/** @return <b>true</b> - if task should be interrupted; <b>false</b> - otherwise */
+	/** 如果任务需要延时进行则返回true,否则返回false */
 	private boolean delayIfNeed() {
 		if (options.shouldDelayBeforeLoading()) {
 			L.d(LOG_DELAY_BEFORE_LOADING, options.getDelayBeforeLoading(), memoryCacheKey);
@@ -324,7 +336,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return syncLoading || fireProgressEvent(current, total);
 	}
 
-	/** @return <b>true</b> - if loading should be continued; <b>false</b> - if loading should be interrupted */
+	/** @return 如果加载需要继续返回true, 如果需要中断加载则返回false */
 	private boolean fireProgressEvent(final int current, final int total) {
 		if (isTaskInterrupted() || isTaskNotActual()) return false;
 		if (progressListener != null) {
@@ -377,9 +389,9 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 	}
 
 	/**
-	 * @throws TaskCancelledException if task is not actual (target ImageAware is collected by GC or the image URI of
-	 *                                this task doesn't match to image URI which is actual for current ImageAware at
-	 *                                this moment)
+	 * @throws TaskCancelledException 
+	 * 检测当前的任务是不是实际的(目标ImageAware被GC回收掉 或者 
+	 * 任务的image URI和当前的ImageAware的image URI不匹配 或者 ImageAware被重新使用)
 	 */
 	private void checkTaskNotActual() throws TaskCancelledException {
 		checkViewCollected();
@@ -387,21 +399,21 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 	}
 
 	/**
-	 * @return <b>true</b> - if task is not actual (target ImageAware is collected by GC or the image URI of this task
-	 * doesn't match to image URI which is actual for current ImageAware at this moment)); <b>false</b> - otherwise
+	 * 检测当前的任务是不是实际的(目标ImageAware被GC回收掉 或者 这个任务的image URI不匹配当前的ImageAware的image URI)
+	 * 返回ture,否则返回false
 	 */
 	private boolean isTaskNotActual() {
 		return isViewCollected() || isViewReused();
 	}
 
-	/** @throws TaskCancelledException if target ImageAware is collected */
+	/** @throws TaskCancelledException 如果目标的ImageAware被回收了 */
 	private void checkViewCollected() throws TaskCancelledException {
 		if (isViewCollected()) {
 			throw new TaskCancelledException();
 		}
 	}
 
-	/** @return <b>true</b> - if target ImageAware is collected by GC; <b>false</b> - otherwise */
+	/** @return true - 如果目标ImageAware被GC回收掉; false - imageAware没有被回收掉*/
 	private boolean isViewCollected() {
 		if (imageAware.isCollected()) {
 			L.d(LOG_TASK_CANCELLED_IMAGEAWARE_COLLECTED, memoryCacheKey);
@@ -410,18 +422,18 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return false;
 	}
 
-	/** @throws TaskCancelledException if target ImageAware is collected by GC */
+	/** @throws TaskCancelledException 如果目标ImageAware是否被重新使用 */
 	private void checkViewReused() throws TaskCancelledException {
 		if (isViewReused()) {
 			throw new TaskCancelledException();
 		}
 	}
 
-	/** @return <b>true</b> - if current ImageAware is reused for displaying another image; <b>false</b> - otherwise */
+	/** @return true - 检测当前ImagAware是否被重新使用来展示令一张图片; false - 没有被重用 */
 	private boolean isViewReused() {
 		String currentCacheKey = engine.getLoadingUriForView(imageAware);
-		// Check whether memory cache key (image URI) for current ImageAware is actual.
-		// If ImageAware is reused for another task then current task should be cancelled.
+		// 检测内存缓存键(image URI)是否是当前ImageAware要展示的
+		// 如果ImageAware是否被另一个任务重用,如果被重用了则当前任务需要被取消
 		boolean imageAwareWasReused = !memoryCacheKey.equals(currentCacheKey);
 		if (imageAwareWasReused) {
 			L.d(LOG_TASK_CANCELLED_IMAGEAWARE_REUSED, memoryCacheKey);
@@ -430,15 +442,16 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return false;
 	}
 
-	/** @throws TaskCancelledException if current task was interrupted */
+	/** @throws TaskCancelledException 如果当前的任务被中断了抛出异常 */
 	private void checkTaskInterrupted() throws TaskCancelledException {
 		if (isTaskInterrupted()) {
 			throw new TaskCancelledException();
 		}
 	}
 
-	/** @return <b>true</b> - if current task was interrupted; <b>false</b> - otherwise */
+	/** @return true - 如果当前的任务被中断; false - 如果当前的任务没有被中断 */
 	private boolean isTaskInterrupted() {
+		/** Thread.interrupted() 在哪里运行检测的就是哪个线程  */
 		if (Thread.interrupted()) {
 			L.d(LOG_TASK_INTERRUPTED, memoryCacheKey);
 			return true;
@@ -446,7 +459,8 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return false;
 	}
 
-	String getLoadingUri() {
+	/** 获取加载的Uri*/
+	public String getLoadingUri() {
 		return uri;
 	}
 
@@ -461,12 +475,10 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 	}
 
 	/**
-	 * Exceptions for case when task is cancelled (thread is interrupted, image view is reused for another task, view is
-	 * collected by GC).
-	 *
-	 * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
-	 * @since 1.9.1
+	 * 因为任务被取消导致的异常(线程被中断,image view被另一个任务重新使用了或被GC回收掉)
+	 * @author renhui
 	 */
 	class TaskCancelledException extends Exception {
+		private static final long serialVersionUID = 8293863812255529729L;
 	}
 }
