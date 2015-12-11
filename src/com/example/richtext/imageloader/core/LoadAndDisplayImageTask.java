@@ -121,22 +121,27 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 			
 			// 如果没有或者内存缓存的内容被回收掉了
 			if (bmp == null || bmp.isRecycled()) {
+				// 尝试去加载Bitmap
 				bmp = tryLoadBitmap();
+				// 如果bitmap为空, 直接跳出此任务,不再继续执行了
 				if (bmp == null) return; // listener callback already was fired
 
+				//再次判断当前是否需要任务继续进行
 				checkTaskNotActual();
 				checkTaskInterrupted();
 
+				// 判断是否需要进行内存的缓存
 				if (bmp != null && options.isCacheInMemory()) {
 					L.d(LOG_CACHE_IMAGE_IN_MEMORY, memoryCacheKey);
 					configuration.memoryCache.put(memoryCacheKey, bmp);
 				}
 			} else {
-				// 已经获得bmp, 设定LoadedFrom--内存缓存
+				// 已经获得bmp, 则修改LoadedFrom的值
 				loadedFrom = LoadedFrom.MEMORY_CACHE;
 				L.d(LOG_GET_IMAGE_FROM_MEMORY_CACHE_AFTER_WAITING, memoryCacheKey);
 			}
 
+			// 在此判断任务是否有继续下去的必要
 			checkTaskNotActual();
 			checkTaskInterrupted();
 		} catch (TaskCancelledException e) {
@@ -146,24 +151,26 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 			loadFromUriLock.unlock();
 		}
 
+		// 加载Bitmap的任务结束,后面执行的是展示的任务
 		DisplayBitmapTask displayBitmapTask = new DisplayBitmapTask(bmp, imageLoadingInfo, engine, loadedFrom);
 		runTask(displayBitmapTask, syncLoading, handler, engine);
 	}
 
 	/**
-	 * // TODO  还是有点不清楚下面的pause到底有什么用
 	 * 判断当前的任务是否暂停了,需要等待 
 	 * @return true - 如果任务需要立即中断; false - 如果不需要中断任务 
 	 */
 	private boolean waitIfPaused() {
-		// 图片加载引擎是否已经暂停
+		// 获取图片加载引擎暂停的状态
 		AtomicBoolean pause = engine.getPause();  
 		if (pause.get()) {
 			synchronized (engine.getPauseLock()) {
 				if (pause.get()) {
 					L.d(LOG_WAITING_FOR_RESUME, memoryCacheKey);
 					try {
-						// TODO 做的什么事情？？？？？？
+						// wait就是说线程在获取对象锁后，主动释放对象锁，同时本线程休眠。
+						// 直到有其它线程调用对象的notify()唤醒该线程，才能继续获取对象锁，并继续执行。
+						// 其实就是为了执行的等待的操作
 						engine.getPauseLock().wait();
 					} catch (InterruptedException e) {
 						L.e(LOG_TASK_INTERRUPTED, memoryCacheKey);
@@ -336,6 +343,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		runTask(r, false, handler, engine);
 	}
 
+	// 任务中断,发出取消任务的监听通知
 	private void fireCancelEvent() {
 		if (syncLoading || isTaskInterrupted()) return;
 		Runnable r = new Runnable() {
