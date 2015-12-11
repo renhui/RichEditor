@@ -31,7 +31,7 @@ public class NoteActivity extends BaseActivity {
 		mActionBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(NoteActivity.this, EditNoteActivity.class);
+				Intent intent = new Intent(NoteActivity.this, NoteEditActivity.class);
 				intent.putExtra("next_page_title", "新建便签");
 				startActivity(intent);
 			}

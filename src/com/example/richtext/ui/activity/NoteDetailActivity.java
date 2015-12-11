@@ -84,7 +84,7 @@ public class NoteDetailActivity extends BaseActivity {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
-										Intent intent = new Intent(NoteDetailActivity.this, EditNoteActivity.class);
+										Intent intent = new Intent(NoteDetailActivity.this, NoteEditActivity.class);
 										intent.putExtra("note_title", mNoteTitle);
 										intent.putExtra("note_content", mNoteContent);
 										intent.putExtra("to_edit", true);

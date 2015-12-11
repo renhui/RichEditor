@@ -59,7 +59,7 @@ import android.widget.TextView;
  * 
  */
 @SuppressLint("SimpleDateFormat")
-public class EditNoteActivity extends BaseActivity {
+public class NoteEditActivity extends BaseActivity {
 	private static final int LONG_BLOG_WIDTH = 440; // 长微博最佳宽度
 
 	private static final int REQUEST_CODE_PICK_IMAGE = 1023;
@@ -71,14 +71,13 @@ public class EditNoteActivity extends BaseActivity {
 	private String mPageTitle;
 	
 	private String mNoteTitle;
-	private String mNoteContent;
 	private boolean mIsToEdit;
 
 	private ActionBar mActionBar;
 	private TextView mActionBarTitle;
 	private EditText mTitleEditor;
 	private RichEditor mContentEditor;
-	private View mBtn1, mBtn2, mBtn3;
+	private View mBtn1, mBtn2, mBtn3, mBtn4;
 	private OnClickListener mBtnListener;
 
 	private File mCurrentPhotoFile;// 照相机拍照得到的图片
@@ -91,7 +90,6 @@ public class EditNoteActivity extends BaseActivity {
 		Intent intent = getIntent();
 		mPageTitle = intent.getStringExtra("next_page_title");
 		mNoteTitle = intent.getStringExtra("note_title");
-		mNoteContent = intent.getStringExtra("note_content");
 		mIsToEdit =intent.getBooleanExtra("to_edit", false);
 		
 		setUpActionBar();
@@ -112,10 +110,8 @@ public class EditNoteActivity extends BaseActivity {
 					// 打开相机
 					openCamera();
 				} else if (v.getId() == mBtn3.getId()) {
-//					 生成长微博
-//					newLongBlog();
 					// 手画板
-					WritePadDialog mWritePadDialog = new WritePadDialog(EditNoteActivity.this, 
+					WritePadDialog mWritePadDialog = new WritePadDialog(NoteEditActivity.this, 
 						new WriteDialogListener() {
 							
 							@Override
@@ -126,6 +122,9 @@ public class EditNoteActivity extends BaseActivity {
 							}
 						});
 					mWritePadDialog.show();
+				} else if (v.getId() == mBtn4.getId()) {
+					// 生成长微博
+					newLongBlog();
 				}
 			}
 		};
@@ -133,10 +132,12 @@ public class EditNoteActivity extends BaseActivity {
 		mBtn1 = findViewById(R.id.button1);
 		mBtn2 = findViewById(R.id.button2);
 		mBtn3 = findViewById(R.id.button3);
+		mBtn4 = findViewById(R.id.share);
 
 		mBtn1.setOnClickListener(mBtnListener);
 		mBtn2.setOnClickListener(mBtnListener);
 		mBtn3.setOnClickListener(mBtnListener);
+		mBtn4.setOnClickListener(mBtnListener);
 	}
 
 	/** 添加ActionBar */
@@ -211,7 +212,7 @@ public class EditNoteActivity extends BaseActivity {
 				note.content = content;
 				note.createTime = System.currentTimeMillis();
 				note.modifyTime = System.currentTimeMillis();
-				DatabaseAccessFactory.getInstance(EditNoteActivity.this).noteAccessor().insert(note);
+				DatabaseAccessFactory.getInstance(NoteEditActivity.this).noteAccessor().insert(note);
 				
 				ToastUtils.show(R.string.note_saved);
 				
@@ -219,7 +220,7 @@ public class EditNoteActivity extends BaseActivity {
 				InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(mActionBarTitle.getWindowToken(), 0);
 				// 跳转
-				Intent intent = new Intent(EditNoteActivity.this,
+				Intent intent = new Intent(NoteEditActivity.this,
 						NoteActivity.class);
 				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -327,7 +328,9 @@ public class EditNoteActivity extends BaseActivity {
 
 		// 存储到数据库
 		String content = dealEditData(editList);
+			
 		if (TextUtils.isEmpty(content)) {
+			ToastUtils.show("内容为空");
 			return;
 		} else {
 			Note note = new Note();
@@ -335,7 +338,7 @@ public class EditNoteActivity extends BaseActivity {
 			note.modifyTime = System.currentTimeMillis();
 			note.nativeId = String.valueOf(System.currentTimeMillis());
 			NoteAccessor accessor = DatabaseAccessFactory.getInstance(
-					EditNoteActivity.this).noteAccessor();
+					NoteEditActivity.this).noteAccessor();
 			accessor.insert(note);
 		}
 
@@ -394,14 +397,8 @@ public class EditNoteActivity extends BaseActivity {
 				BitmapFactory.decodeFile(itemData.imagePath, options);
 				DisplayImageOptions opt = new DisplayImageOptions.Builder()
 						.imageScaleType(ImageScaleType.EXACTLY).build();
-				Bitmap b = ImageLoader
-						.getInstance()
-						.loadImageSync(
-								"file://" + itemData.imagePath,
-								new ImageSize(
-										LONG_BLOG_WIDTH,
-										(int) ((float) options.outHeight / ((float) options.outWidth / (float) LONG_BLOG_WIDTH))),
-								opt);
+				Bitmap b = ImageLoader.getInstance().loadImageSync("file://" + itemData.imagePath,
+						new ImageSize(LONG_BLOG_WIDTH, (int) ((float) options.outHeight / ((float) options.outWidth / (float) LONG_BLOG_WIDTH))), opt);
 				canvas.drawBitmap(b, 0, y, null);
 				canvas.save(Canvas.ALL_SAVE_FLAG);
 				y += ((float) options.outHeight / ((float) options.outWidth / (float) LONG_BLOG_WIDTH)) + 35;
@@ -410,11 +407,10 @@ public class EditNoteActivity extends BaseActivity {
 		canvas.restore();
 
 		File sd = Environment.getExternalStorageDirectory();
-		String fpath = sd.getPath() + "/EasyChangWeibo";
+		String fpath = sd.getPath() + "/RichEditor";
 
 		// 设置保存路径
-		String path = sd.getPath() + "/EasyChangWeibo/"
-				+ System.currentTimeMillis() + ".png";
+		String path = sd.getPath() + "/RichEditor/" + System.currentTimeMillis() + ".png";
 
 		File file = new File(fpath);
 		if (!file.exists()) {
