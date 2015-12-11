@@ -113,13 +113,6 @@ public class MixedTextView extends LinearLayout {
 
 		int phone_width = mContext.getResources().getDisplayMetrics().widthPixels; // 屏宽
 		showImage(phone_width, uriStr, image);
-		image.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				BigImageDialog dialog = new BigImageDialog(mContext);
-				dialog.showBigImage(image, uri);
-			}
-		});
 		imageLayout.addView(image);
 		this.addView(imageLayout);
 	}
