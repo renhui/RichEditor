@@ -2,30 +2,53 @@ package com.example.richtext.imageloader.cache.memory;
 
 import android.graphics.Bitmap;
 
-import java.util.Collection;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 /**
- * 接口--内存缓存
+ * 内存缓存基类 (貌似存储bitmap的引用都是软引用 SoftReference) 实现了内存缓存的通用的功能. 提供了对象引用的非强引用存储功能
+ * {@linkplain Reference not strong})
  *
  * @author renhui
  */
-public interface MemoryCache {
-	/**
-	 * 通过键值对的方式放入缓存中
-	 *
-	 * @return <b>true</b> - 如果成功放置键值对到缓存中, <b>false</b> - 如果没有放置到缓存中
-	 */
-	boolean put(String key, Bitmap value);
+public class MemoryCache {
 
-	/** 根据键返回值. 如果没有此键的值则返回null. */
-	Bitmap get(String key);
+	/** 存储方式：存储对象的软引用 */
+	private final Map<String, Reference<Bitmap>> softMap = Collections
+			.synchronizedMap(new HashMap<String, Reference<Bitmap>>());
 
-	/** 根据key移除内容 */
-	Bitmap remove(String key);
+	public Bitmap get(String key) {
+		Bitmap result = null;
+		Reference<Bitmap> reference = softMap.get(key);
+		if (reference != null) {
+			result = reference.get();
+		}
+		return result;
+	}
 
-	/** 返回缓存中的所有的键 */
-	Collection<String> keys();
+	public boolean put(String key, Bitmap value) {
+		softMap.put(key, createReference(value));
+		return true;
+	}
 
-	/** 从缓存中移除所有的内容 */
-	void clear();
+	public Bitmap remove(String key) {
+		Reference<Bitmap> bmpRef = softMap.remove(key);
+		return bmpRef == null ? null : bmpRef.get();
+	}
+
+	public Collection<String> keys() {
+		synchronized (softMap) {
+			return new HashSet<String>(softMap.keySet());
+		}
+	}
+
+	public void clear() {
+		softMap.clear();
+	}
+
+	/** 创建对象值的非强引用---注：这个方法决定了缓存对象性质和方式 */
+	protected Reference<Bitmap> createReference(Bitmap value) {
+		return new WeakReference<Bitmap>(value);
+	}
 }

@@ -17,7 +17,9 @@ package com.example.richtext.imageloader.utils;
 
 import android.graphics.Bitmap;
 
+
 import com.example.richtext.imageloader.cache.memory.MemoryCache;
+//import com.example.richtext.imageloader.cache.memory.MemoryCache;
 import com.example.richtext.imageloader.core.ImageLoaderConfiguration;
 import com.example.richtext.imageloader.core.assist.ImageSize;
 

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.example.richtext.imageloader.cache.disc.DiskCache;
 import com.example.richtext.imageloader.cache.memory.MemoryCache;
+//import com.example.richtext.imageloader.cache.memory.MemoryCache;
 import com.example.richtext.imageloader.core.assist.FailReason;
 import com.example.richtext.imageloader.core.assist.FlushedInputStream;
 import com.example.richtext.imageloader.core.assist.ImageSize;

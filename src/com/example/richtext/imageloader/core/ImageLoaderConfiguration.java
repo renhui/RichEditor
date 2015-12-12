@@ -20,16 +20,15 @@ import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
 import com.example.richtext.imageloader.cache.disc.DiskCache;
-import com.example.richtext.imageloader.cache.disc.naming.FileNameGenerator;
+import com.example.richtext.imageloader.cache.disc.FileNameGenerator;
 import com.example.richtext.imageloader.cache.memory.MemoryCache;
-import com.example.richtext.imageloader.cache.memory.impl.FuzzyKeyMemoryCache;
+//import com.example.richtext.imageloader.cache.memory.MemoryCache;
 import com.example.richtext.imageloader.core.assist.FlushedInputStream;
 import com.example.richtext.imageloader.core.assist.ImageSize;
 import com.example.richtext.imageloader.core.assist.QueueProcessingType;
 import com.example.richtext.imageloader.core.decode.ImageDecoder;
 import com.example.richtext.imageloader.core.download.ImageDownloader;
 import com.example.richtext.imageloader.utils.L;
-import com.example.richtext.imageloader.utils.MemoryCacheUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -451,7 +450,7 @@ public final class ImageLoaderConfiguration {
 			return this;
 		}
 
-		/** @deprecated Use {@link #diskCacheFileNameGenerator(com.example.richtext.imageloader.cache.disc.naming.FileNameGenerator)} */
+		/** @deprecated Use {@link #diskCacheFileNameGenerator(com.example.richtext.imageloader.cache.disc.FileNameGenerator)} */
 		@Deprecated
 		public Builder discCacheFileNameGenerator(FileNameGenerator fileNameGenerator) {
 			return diskCacheFileNameGenerator(fileNameGenerator);
@@ -575,9 +574,6 @@ public final class ImageLoaderConfiguration {
 			}
 			if (memoryCache == null) {
 				memoryCache = DefaultConfigurationFactory.createMemoryCache(context, memoryCacheSize);
-			}
-			if (denyCacheImageMultipleSizesInMemory) {
-				memoryCache = new FuzzyKeyMemoryCache(memoryCache, MemoryCacheUtils.createFuzzyKeyComparator());
 			}
 			if (downloader == null) {
 				downloader = DefaultConfigurationFactory.createImageDownloader(context);

@@ -8,7 +8,6 @@ import android.os.Handler;
 
 import com.example.richtext.imageloader.core.assist.ImageScaleType;
 import com.example.richtext.imageloader.core.display.BitmapDisplayer;
-import com.example.richtext.imageloader.core.display.SimpleBitmapDisplayer;
 import com.example.richtext.imageloader.core.download.ImageDownloader;
 import com.example.richtext.imageloader.core.listener.ImageLoadingListener;
 

@@ -7,25 +7,18 @@ import android.content.pm.ApplicationInfo;
 import android.os.Build;
 
 import com.example.richtext.imageloader.cache.disc.DiskCache;
-import com.example.richtext.imageloader.cache.disc.impl.UnlimitedDiskCache;
-import com.example.richtext.imageloader.cache.disc.impl.ext.LruDiskCache;
-import com.example.richtext.imageloader.cache.disc.naming.FileNameGenerator;
-import com.example.richtext.imageloader.cache.disc.naming.HashCodeFileNameGenerator;
+import com.example.richtext.imageloader.cache.disc.FileNameGenerator;
 import com.example.richtext.imageloader.cache.memory.MemoryCache;
-import com.example.richtext.imageloader.cache.memory.impl.LruMemoryCache;
 import com.example.richtext.imageloader.core.assist.QueueProcessingType;
 import com.example.richtext.imageloader.core.assist.deque.LIFOLinkedBlockingDeque;
 import com.example.richtext.imageloader.core.decode.BaseImageDecoder;
 import com.example.richtext.imageloader.core.decode.ImageDecoder;
 import com.example.richtext.imageloader.core.display.BitmapDisplayer;
-import com.example.richtext.imageloader.core.display.SimpleBitmapDisplayer;
 import com.example.richtext.imageloader.core.download.BaseImageDownloader;
 import com.example.richtext.imageloader.core.download.ImageDownloader;
-import com.example.richtext.imageloader.utils.L;
 import com.example.richtext.imageloader.utils.StorageUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -58,9 +51,9 @@ public class DefaultConfigurationFactory {
 		return Executors.newCachedThreadPool(createThreadFactory(Thread.NORM_PRIORITY, "uil-pool-d-"));
 	}
 
-	/** Creates {@linkplain HashCodeFileNameGenerator default implementation} of FileNameGenerator */
+	/** Creates {@linkplain FileNameGenerator default implementation} of FileNameGenerator */
 	public static FileNameGenerator createFileNameGenerator() {
-		return new HashCodeFileNameGenerator();
+		return new FileNameGenerator();
 	}
 
 	/**
@@ -68,30 +61,10 @@ public class DefaultConfigurationFactory {
 	 */
 	public static DiskCache createDiskCache(Context context, FileNameGenerator diskCacheFileNameGenerator,
 			long diskCacheSize, int diskCacheFileCount) {
-		File reserveCacheDir = createReserveDiskCacheDir(context);
-		if (diskCacheSize > 0 || diskCacheFileCount > 0) {
-			File individualCacheDir = StorageUtils.getIndividualCacheDirectory(context);
-			try {
-				return new LruDiskCache(individualCacheDir, reserveCacheDir, diskCacheFileNameGenerator, diskCacheSize,
-						diskCacheFileCount);
-			} catch (IOException e) {
-				L.e(e);
-				// continue and create unlimited cache
-			}
-		}
 		File cacheDir = StorageUtils.getCacheDirectory(context);
-		return new UnlimitedDiskCache(cacheDir, reserveCacheDir, diskCacheFileNameGenerator);
+		return new DiskCache(cacheDir);
 	}
 
-	/** Creates reserve disk cache folder which will be used if primary disk cache folder becomes unavailable */
-	private static File createReserveDiskCacheDir(Context context) {
-		File cacheDir = StorageUtils.getCacheDirectory(context, false);
-		File individualDir = new File(cacheDir, "uil-images");
-		if (individualDir.exists() || individualDir.mkdir()) {
-			cacheDir = individualDir;
-		}
-		return cacheDir;
-	}
 
 	/**
 	 * Creates default implementation of {@link MemoryCache} - {@link LruMemoryCache}<br />
@@ -106,7 +79,7 @@ public class DefaultConfigurationFactory {
 			}
 			memoryCacheSize = 1024 * 1024 * memoryClass / 8;
 		}
-		return new LruMemoryCache(memoryCacheSize);
+		return new MemoryCache();
 	}
 
 	private static boolean hasHoneycomb() {
@@ -135,7 +108,7 @@ public class DefaultConfigurationFactory {
 
 	/** Creates default implementation of {@link BitmapDisplayer} - {@link SimpleBitmapDisplayer} */
 	public static BitmapDisplayer createBitmapDisplayer() {
-		return new SimpleBitmapDisplayer();
+		return new BitmapDisplayer();
 	}
 
 	/** Creates default implementation of {@linkplain ThreadFactory thread factory} for task executor */
