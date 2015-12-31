@@ -1,4 +1,4 @@
-package com.example.richtext.imageloader.cache.disc;
+package com.example.richtext.utils.imageloader.base.cache.disc;
 
 /**
  * 根据图片的uri生成hashcode类型的缓存文件名

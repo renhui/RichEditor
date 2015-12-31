@@ -4,12 +4,12 @@ import android.graphics.Bitmap;
 
 import com.example.richtext.imageloader.core.assist.LoadedFrom;
 import com.example.richtext.imageloader.core.display.BitmapDisplayer;
-import com.example.richtext.imageloader.core.imageaware.ImageAware;
 import com.example.richtext.imageloader.core.listener.ImageLoadingListener;
 import com.example.richtext.imageloader.utils.L;
+import com.example.richtext.utils.imageloader.base.imageaware.ImageAware;
 
 /**
- * Displays bitmap in {@link com.example.richtext.imageloader.core.imageaware.ImageAware}. Must be called on UI thread.
+ * Displays bitmap in {@link com.example.richtext.utils.imageloader.base.imageaware.ImageAware}. Must be called on UI thread.
  *
  * @author renhui
  * @see ImageLoadingListener

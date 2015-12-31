@@ -2,10 +2,12 @@ package com.example.richtext.imageloader.core;
 
 import android.annotation.SuppressLint;
 import android.view.View;
+
 import com.example.richtext.imageloader.core.assist.FailReason;
 import com.example.richtext.imageloader.core.assist.FlushedInputStream;
-import com.example.richtext.imageloader.core.imageaware.ImageAware;
 import com.example.richtext.imageloader.core.listener.ImageLoadingListener;
+import com.example.richtext.utils.imageloader.base.imageaware.ImageAware;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
@@ -83,7 +85,7 @@ class ImageLoaderEngine {
 	}
 
 	/**
-	 * Returns URI of image which is loading at this moment into passed {@link com.example.richtext.imageloader.core.imageaware.ImageAware}
+	 * Returns URI of image which is loading at this moment into passed {@link com.example.richtext.utils.imageloader.base.imageaware.ImageAware}
 	 */
 	String getLoadingUriForView(ImageAware imageAware) {
 		return cacheKeysForImageAwares.get(imageAware.getId());
@@ -100,7 +102,7 @@ class ImageLoaderEngine {
 	/**
 	 * Cancels the task of loading and displaying image for incoming <b>imageAware</b>.
 	 *
-	 * @param imageAware {@link com.example.richtext.imageloader.core.imageaware.ImageAware} for which display task
+	 * @param imageAware {@link com.example.richtext.utils.imageloader.base.imageaware.ImageAware} for which display task
 	 *                   will be cancelled
 	 */
 	void cancelDisplayTaskFor(ImageAware imageAware) {

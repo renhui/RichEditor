@@ -13,11 +13,11 @@ import com.example.richtext.imageloader.core.decode.ImageDecoder;
 import com.example.richtext.imageloader.core.decode.ImageDecodingInfo;
 import com.example.richtext.imageloader.core.download.ImageDownloader;
 import com.example.richtext.imageloader.core.download.ImageDownloader.Scheme;
-import com.example.richtext.imageloader.core.imageaware.ImageAware;
 import com.example.richtext.imageloader.core.listener.ImageLoadingListener;
 import com.example.richtext.imageloader.core.listener.ImageLoadingProgressListener;
 import com.example.richtext.imageloader.utils.IoUtils;
 import com.example.richtext.imageloader.utils.L;
+import com.example.richtext.utils.imageloader.base.imageaware.ImageAware;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +72,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 	private final boolean syncLoading;
 
 	// State vars
+	// 根据目前的日志输出可以了解到当前NetWork的使用存在BUG
 	private LoadedFrom loadedFrom = LoadedFrom.NETWORK;
 
 	public LoadAndDisplayImageTask(ImageLoaderEngine engine, ImageLoadingInfo imageLoadingInfo, Handler handler) {
@@ -141,7 +142,7 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 				L.d(LOG_GET_IMAGE_FROM_MEMORY_CACHE_AFTER_WAITING, memoryCacheKey);
 			}
 
-			// 在此判断任务是否有继续下去的必要
+			// 再次判断任务是否有继续下去的必要
 			checkTaskNotActual();
 			checkTaskInterrupted();
 		} catch (TaskCancelledException e) {
@@ -443,10 +444,13 @@ final class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 		return uri;
 	}
 
+	// 根据实际情况来选择是进行同步执行展示任务还是异步执行展示的任务
 	static void runTask(Runnable r, boolean sync, Handler handler, ImageLoaderEngine engine) {
+		// 如果需要同步执行下去,则将要进行的任务放在当前的线程上面继续执行
 		if (sync) {
 			r.run();
 		} else if (handler == null) {
+			// 如果没有Handler则放到engine的线程池执行
 			engine.fireCallback(r);
 		} else {
 			handler.post(r);

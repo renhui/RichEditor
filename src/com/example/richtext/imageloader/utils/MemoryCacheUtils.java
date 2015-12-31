@@ -18,10 +18,11 @@ package com.example.richtext.imageloader.utils;
 import android.graphics.Bitmap;
 
 
-import com.example.richtext.imageloader.cache.memory.MemoryCache;
+
 //import com.example.richtext.imageloader.cache.memory.MemoryCache;
 import com.example.richtext.imageloader.core.ImageLoaderConfiguration;
 import com.example.richtext.imageloader.core.assist.ImageSize;
+import com.example.richtext.utils.imageloader.base.cache.memory.MemoryCache;
 
 import java.util.ArrayList;
 import java.util.Comparator;

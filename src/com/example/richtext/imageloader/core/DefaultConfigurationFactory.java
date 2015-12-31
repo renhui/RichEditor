@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Build;
 
-import com.example.richtext.imageloader.cache.disc.DiskCache;
-import com.example.richtext.imageloader.cache.disc.FileNameGenerator;
-import com.example.richtext.imageloader.cache.memory.MemoryCache;
 import com.example.richtext.imageloader.core.assist.QueueProcessingType;
 import com.example.richtext.imageloader.core.assist.deque.LIFOLinkedBlockingDeque;
 import com.example.richtext.imageloader.core.decode.BaseImageDecoder;
@@ -17,6 +14,9 @@ import com.example.richtext.imageloader.core.display.BitmapDisplayer;
 import com.example.richtext.imageloader.core.download.BaseImageDownloader;
 import com.example.richtext.imageloader.core.download.ImageDownloader;
 import com.example.richtext.imageloader.utils.StorageUtils;
+import com.example.richtext.utils.imageloader.base.cache.disc.DiskCache;
+import com.example.richtext.utils.imageloader.base.cache.disc.FileNameGenerator;
+import com.example.richtext.utils.imageloader.base.cache.memory.MemoryCache;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;

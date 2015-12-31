@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.example.richtext.imageloader.core.imageaware;
+package com.example.richtext.utils.imageloader.base.imageaware;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;

@@ -3,7 +3,7 @@ package com.example.richtext.imageloader.core.display;
 import android.graphics.Bitmap;
 
 import com.example.richtext.imageloader.core.assist.LoadedFrom;
-import com.example.richtext.imageloader.core.imageaware.ImageAware;
+import com.example.richtext.utils.imageloader.base.imageaware.ImageAware;
 
 /**
  * 在{@link ImageAware}里面展示{@link Bitmap}. 实现的代码需要适用于一些Bitmap的变化或者任何Bitmap动画的展示

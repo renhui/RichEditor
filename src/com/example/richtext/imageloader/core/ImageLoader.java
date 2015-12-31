@@ -7,23 +7,23 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.example.richtext.imageloader.cache.disc.DiskCache;
-import com.example.richtext.imageloader.cache.memory.MemoryCache;
 //import com.example.richtext.imageloader.cache.memory.MemoryCache;
 import com.example.richtext.imageloader.core.assist.FailReason;
 import com.example.richtext.imageloader.core.assist.FlushedInputStream;
 import com.example.richtext.imageloader.core.assist.ImageSize;
 import com.example.richtext.imageloader.core.assist.LoadedFrom;
 import com.example.richtext.imageloader.core.assist.ViewScaleType;
-import com.example.richtext.imageloader.core.imageaware.ImageAware;
-import com.example.richtext.imageloader.core.imageaware.ImageViewAware;
-import com.example.richtext.imageloader.core.imageaware.NonViewAware;
 import com.example.richtext.imageloader.core.listener.ImageLoadingListener;
 import com.example.richtext.imageloader.core.listener.ImageLoadingProgressListener;
 import com.example.richtext.imageloader.core.listener.SimpleImageLoadingListener;
 import com.example.richtext.imageloader.utils.ImageSizeUtils;
 import com.example.richtext.imageloader.utils.L;
 import com.example.richtext.imageloader.utils.MemoryCacheUtils;
+import com.example.richtext.utils.imageloader.base.cache.disc.DiskCache;
+import com.example.richtext.utils.imageloader.base.cache.memory.MemoryCache;
+import com.example.richtext.utils.imageloader.base.imageaware.ImageAware;
+import com.example.richtext.utils.imageloader.base.imageaware.ImageViewAware;
+import com.example.richtext.utils.imageloader.base.imageaware.NonViewAware;
 
 /**
  * Image加载和在{@link ImageView}展示的单例
@@ -105,7 +105,7 @@ public class ImageLoader {
 	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
 	 *
 	 * @param uri        Image URI (i.e. "http://site.com/image.png", "file:///mnt/sdcard/image.png")
-	 * @param imageAware {@linkplain com.example.richtext.imageloader.core.imageaware.ImageAware Image aware view}
+	 * @param imageAware {@linkplain com.example.richtext.utils.imageloader.base.imageaware.ImageAware Image aware view}
 	 *                   which should display image
 	 * @throws IllegalStateException    if {@link #init(ImageLoaderConfiguration)} method wasn't called before
 	 * @throws IllegalArgumentException if passed <b>imageAware</b> is null
@@ -121,7 +121,7 @@ public class ImageLoader {
 	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
 	 *
 	 * @param uri        Image URI (i.e. "http://site.com/image.png", "file:///mnt/sdcard/image.png")
-	 * @param imageAware {@linkplain com.example.richtext.imageloader.core.imageaware.ImageAware Image aware view}
+	 * @param imageAware {@linkplain com.example.richtext.utils.imageloader.base.imageaware.ImageAware Image aware view}
 	 *                   which should display image
 	 * @param listener   {@linkplain ImageLoadingListener Listener} for image loading process. Listener fires events on
 	 *                   UI thread if this method is called on UI thread.
@@ -137,7 +137,7 @@ public class ImageLoader {
 	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
 	 *
 	 * @param uri        Image URI (i.e. "http://site.com/image.png", "file:///mnt/sdcard/image.png")
-	 * @param imageAware {@linkplain com.example.richtext.imageloader.core.imageaware.ImageAware Image aware view}
+	 * @param imageAware {@linkplain com.example.richtext.utils.imageloader.base.imageaware.ImageAware Image aware view}
 	 *                   which should display image
 	 * @param options    {@linkplain com.example.richtext.imageloader.core.DisplayImageOptions Options} for image
 	 *                   decoding and displaying. If <b>null</b> - default display image options
@@ -155,7 +155,7 @@ public class ImageLoader {
 	 * <b>NOTE:</b> {@link #init(ImageLoaderConfiguration)} method must be called before this method call
 	 *
 	 * @param uri        Image URI (i.e. "http://site.com/image.png", "file:///mnt/sdcard/image.png")
-	 * @param imageAware {@linkplain com.example.richtext.imageloader.core.imageaware.ImageAware Image aware view}
+	 * @param imageAware {@linkplain com.example.richtext.utils.imageloader.base.imageaware.ImageAware Image aware view}
 	 *                   which should display image
 	 * @param options    {@linkplain com.example.richtext.imageloader.core.DisplayImageOptions Options} for image
 	 *                   decoding and displaying. If <b>null</b> - default display image options
@@ -176,7 +176,7 @@ public class ImageLoader {
 	 * 注意：在调用此方法之前必须要调用{@link #init(ImageLoaderConfiguration)}方法
 	 *
 	 * @param uri              Image URI (i.e. "http://site.com/image.png", "file:///mnt/sdcard/image.png")
-	 * @param imageAware       {@linkplain com.example.richtext.imageloader.core.imageaware.ImageAware Image aware view}
+	 * @param imageAware       {@linkplain com.example.richtext.utils.imageloader.base.imageaware.ImageAware Image aware view}
 	 *                         which should display image
 	 * @param options          {@linkplain com.example.richtext.imageloader.core.DisplayImageOptions Options} for image
 	 *                         decoding and displaying. If <b>null</b> - default display image options
@@ -617,7 +617,7 @@ public class ImageLoader {
 
 	/**
 	 * Returns URI of image which is loading at this moment into passed
-	 * {@link com.example.richtext.imageloader.core.imageaware.ImageAware ImageAware}
+	 * {@link com.example.richtext.utils.imageloader.base.imageaware.ImageAware ImageAware}
 	 */
 	public String getLoadingUriForView(ImageAware imageAware) {
 		return engine.getLoadingUriForView(imageAware);
@@ -633,9 +633,9 @@ public class ImageLoader {
 
 	/**
 	 * Cancel the task of loading and displaying image for passed
-	 * {@link com.example.richtext.imageloader.core.imageaware.ImageAware ImageAware}.
+	 * {@link com.example.richtext.utils.imageloader.base.imageaware.ImageAware ImageAware}.
 	 *
-	 * @param imageAware {@link com.example.richtext.imageloader.core.imageaware.ImageAware ImageAware} for
+	 * @param imageAware {@link com.example.richtext.utils.imageloader.base.imageaware.ImageAware ImageAware} for
 	 *                   which display task will be cancelled
 	 */
 	public void cancelDisplayTask(ImageAware imageAware) {

@@ -1,9 +1,9 @@
 package com.example.richtext.imageloader.core;
 
 import com.example.richtext.imageloader.core.assist.ImageSize;
-import com.example.richtext.imageloader.core.imageaware.ImageAware;
 import com.example.richtext.imageloader.core.listener.ImageLoadingListener;
 import com.example.richtext.imageloader.core.listener.ImageLoadingProgressListener;
+import com.example.richtext.utils.imageloader.base.imageaware.ImageAware;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -16,23 +16,23 @@ import java.util.concurrent.locks.ReentrantLock;
  * @see ImageLoadingListener
  * @see com.example.richtext.imageloader.core.listener.ImageLoadingProgressListener
  */
-final class ImageLoadingInfo {
+public class ImageLoadingInfo {
 	/**图片的uri */
-	final String uri;   
+	public String uri;   
 	/**图片缓存键 */
-	final String memoryCacheKey;
+	public String memoryCacheKey;
 	/**图片展示控件 {@link ImageAware} */
-	final ImageAware imageAware;
+	public ImageAware imageAware;
 	/**图片尺寸信息{@link ImageSize} */
-	final ImageSize targetSize;
+	public ImageSize targetSize;
 	/**图片展示时的参数 */
-	final DisplayImageOptions options;
+	public DisplayImageOptions options;
 	/**图片加载时的监听 */
-	final ImageLoadingListener listener;
+	public ImageLoadingListener listener;
 	/**图片加载过程的监听 */
-	final ImageLoadingProgressListener progressListener;
+	public ImageLoadingProgressListener progressListener;
 	/**图片加载时的uri锁 */
-	final ReentrantLock loadFromUriLock;
+	public ReentrantLock loadFromUriLock;
 
 	public ImageLoadingInfo(String uri, ImageAware imageAware, ImageSize targetSize, String memoryCacheKey,
 			DisplayImageOptions options, ImageLoadingListener listener,

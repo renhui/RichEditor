@@ -1,4 +1,4 @@
-package com.example.richtext.imageloader.cache.memory;
+package com.example.richtext.utils.imageloader.base.cache.memory;
 
 import android.graphics.Bitmap;
 

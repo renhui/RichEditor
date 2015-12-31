@@ -5,7 +5,7 @@ import android.opengl.GLES10;
 
 import com.example.richtext.imageloader.core.assist.ImageSize;
 import com.example.richtext.imageloader.core.assist.ViewScaleType;
-import com.example.richtext.imageloader.core.imageaware.ImageAware;
+import com.example.richtext.utils.imageloader.base.imageaware.ImageAware;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -31,7 +31,7 @@ public final class ImageSizeUtils {
 	}
 
 	/**
-	 * 定义图片视图的大小. 尺寸被目标 {@link com.example.richtext.imageloader.core.imageaware.ImageAware}
+	 * 定义图片视图的大小. 尺寸被目标 {@link com.example.richtext.utils.imageloader.base.imageaware.ImageAware}
 	 * 参数、配置参数或者设备显示的尺寸定义.
 	 */
 	public static ImageSize defineTargetSizeForView(ImageAware imageAware, ImageSize maxImageSize) {

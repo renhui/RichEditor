@@ -2,7 +2,7 @@ package com.example.richtext.imageloader.utils;
 
 import java.io.File;
 
-import com.example.richtext.imageloader.cache.disc.DiskCache;
+import com.example.richtext.utils.imageloader.base.cache.disc.DiskCache;
 
 /**
  * 图片磁盘缓存工具类

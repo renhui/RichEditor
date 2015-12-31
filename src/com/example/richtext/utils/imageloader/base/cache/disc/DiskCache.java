@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.example.richtext.imageloader.cache.disc;
+package com.example.richtext.utils.imageloader.base.cache.disc;
 
 import android.graphics.Bitmap;
 
@@ -71,7 +71,7 @@ public class DiskCache {
 	/**
 	 * @param cacheDir          Directory for file caching
 	 * @param reserveCacheDir   null-ok; Reserve directory for file caching. It's used when the primary directory isn't available.
-	 * @param fileNameGenerator {@linkplain com.example.richtext.imageloader.cache.disc.FileNameGenerator
+	 * @param fileNameGenerator {@linkplain com.example.richtext.utils.imageloader.base.cache.disc.FileNameGenerator
 	 *                          Name generator} for cached files
 	 */
 	public DiskCache(File cacheDir, File reserveCacheDir, FileNameGenerator fileNameGenerator) {
