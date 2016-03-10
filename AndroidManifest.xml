@@ -2,10 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.richtext"
     android:versionCode="1"
-    android:versionName="1.0" >
-    
+    android:versionName="1.0.50" >
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -13,14 +16,16 @@
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="18" />
-
+        android:targetSdkVersion="19" />
     <application
+        android:name="com.example.richtext.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
+        
+        <!-- 便签展示界面 (主页)-->
         <activity
-            android:name="com.example.richtext.MainActivity"
+            android:name="com.example.richtext.ui.activity.NoteActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" >
@@ -30,5 +35,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <!-- 便签编辑界面 -->
+        <activity
+            android:name="com.example.richtext.ui.activity.NoteEditActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        
+        <!-- 便签详情界面 -->
+        <activity 
+            android:name="com.example.richtext.ui.activity.NoteDetailActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"/>
+
+        <!-- 友盟 配置 -->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5644729867e58e76ea001298" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="app store" />
+        <!-- END  友盟配置 -->
+        
+        
     </application>
+
 </manifest>

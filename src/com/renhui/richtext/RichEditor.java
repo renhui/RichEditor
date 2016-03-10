@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.richtext.R;
-import com.frame.imageloader.core.ImageLoader;
+import com.example.richtext.imageloader.core.ImageLoader;
+import com.example.richtext.moudle.EditData;
+import com.example.richtext.ui.widget.RichImageView;
 
 import android.animation.LayoutTransition;
 import android.animation.LayoutTransition.TransitionListener;

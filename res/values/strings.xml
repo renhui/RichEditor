@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">RichEditor</string>
+    <string name="app_name">RichNote</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    
+    <!-- EditNoteActivity -->
+    <string name="note_editor_title">请输入标题</string>
+    <string name="save_note">保存</string>
+    <string name="note_saved">笔记保存成功</string>
+    <string name="title_empty">标题为空,请输入标题 ＾＿＾</string>
+    <string name="content_empty">内容为空,请输入内容 ＾＿＾</string>
+    
+    <!-- NoteActivity-->
+     <string name="create_note">新建笔记</string>
+    
 
 </resources>
