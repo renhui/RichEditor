@@ -209,7 +209,7 @@ public class RichEditor extends ScrollView {
 		View preView = mContainerLayout.getChildAt(disappearingImageIndex -1);
 		View nextView = mContainerLayout.getChildAt(disappearingImageIndex);
 		
-		// 判断上下方是否都为EditText,
+		// 判断上下方是否都为EditText
 		if (preView != null && preView instanceof EditText && nextView != null && nextView instanceof EditText) {
 			EditText preEdit = (EditText) preView;
 			EditText nextEdit = (EditText) nextView;
