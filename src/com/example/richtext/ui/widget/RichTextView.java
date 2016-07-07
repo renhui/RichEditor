@@ -26,7 +26,7 @@ import android.widget.ImageView.ScaleType;
  * 
  * @author renhui
  */
-public class MixedTextView extends LinearLayout {
+public class RichTextView extends LinearLayout {
 	
 	public static final String IMAGE_SRC_REGEX = "<img[^<>]*?\\ssrc=['\"]?(.*?)['\"].*?>";
 	
@@ -34,7 +34,7 @@ public class MixedTextView extends LinearLayout {
 	private String mContent;
 	private SparseArray<String> mImageArray;
 
-	public MixedTextView(Context context, String content) {
+	public RichTextView(Context context, String content) {
 		super(context);
 		mContext = context;
 		mContent = content;
@@ -133,7 +133,7 @@ public class MixedTextView extends LinearLayout {
 			image.setImageBitmap(bitmap);
 			image.invalidate();
 		} else {
-			// 后续功能里面可能有去网络上加载图片的方式
+			// 各位可以根据自己的需要做其他的图片加载逻辑 
 		}
 	}
 

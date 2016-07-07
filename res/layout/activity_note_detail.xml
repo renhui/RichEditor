@@ -4,13 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/note_detail_content"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFF"
-        android:orientation="vertical"
-        android:padding="16dp" />
+        android:background="#FFFFFF" >
+
+        <LinearLayout
+            android:id="@+id/note_detail_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            android:orientation="vertical"
+            android:padding="16dp" />
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"

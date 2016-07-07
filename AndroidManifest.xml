@@ -48,6 +48,12 @@
             android:name="com.example.richtext.ui.activity.NoteDetailActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"/>
+        
+        <!-- 便签再编辑界面 -->
+        <activity
+            android:name="com.example.richtext.ui.activity.NoteReEditActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"/>
 
         <!-- 友盟 配置 -->
         <meta-data
