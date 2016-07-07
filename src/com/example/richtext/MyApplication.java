@@ -1,7 +1,7 @@
 package com.example.richtext;
 
-import com.example.richtext.imageloader.core.ImageLoader;
-import com.example.richtext.imageloader.core.ImageLoaderConfiguration;
+import com.imageloader.core.ImageLoader;
+import com.imageloader.core.ImageLoaderConfiguration;
 import com.example.richtext.utils.DebugTraceTool;
 
 import android.app.Application;

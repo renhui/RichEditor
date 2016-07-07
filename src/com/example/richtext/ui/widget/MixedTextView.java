@@ -5,10 +5,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.example.richtext.R;
-import com.example.richtext.imageloader.core.DisplayImageOptions;
-import com.example.richtext.imageloader.core.ImageLoader;
-import com.example.richtext.imageloader.core.assist.ImageScaleType;
-import com.example.richtext.imageloader.core.assist.ImageSize;
+import com.imageloader.core.DisplayImageOptions;
+import com.imageloader.core.ImageLoader;
+import com.imageloader.core.assist.ImageScaleType;
+import com.imageloader.core.assist.ImageSize;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,7 +16,6 @@ import android.graphics.BitmapFactory;
 import android.text.Html;
 import android.util.SparseArray;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
