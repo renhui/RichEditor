@@ -26,7 +26,7 @@ import android.widget.LinearLayout;
  * 注：主要是通过EditText来完成相关的再编辑处理 {@link RichEditor} 完成的是首次创建的编辑操作
  * ,因为RichEditor编辑效果好，但是不能做为再编辑的控件
  * 
- * {@link RichEditView} 可以作为初次编辑的控件，也可以作为再次编辑的控件，实用性更高
+ * {@link RichEditView} 可以作为初次编辑的控件，也可以作为再次编辑的控件，实用性相比 {@link RichEditor} 更高
  * 
  * @author RenHui
  */
