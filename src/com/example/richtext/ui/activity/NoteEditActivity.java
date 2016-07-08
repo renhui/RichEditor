@@ -20,6 +20,7 @@ import com.example.richtext.sqlite.tables.NoteAccessor;
 import com.example.richtext.ui.widget.RichEditor;
 import com.example.richtext.ui.widget.handwriting.WritePadDialog;
 import com.example.richtext.ui.widget.handwriting.listener.WriteDialogListener;
+import com.example.richtext.utils.FileUtils;
 import com.example.richtext.utils.ImageUtils;
 import com.example.richtext.utils.LongBlogContent;
 import com.example.richtext.utils.ToastUtils;
@@ -27,9 +28,7 @@ import com.example.richtext.utils.ToastUtils;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -39,7 +38,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images.ImageColumns;
 import android.text.TextUtils;
 import android.text.TextUtils.TruncateAt;
 import android.util.TypedValue;
@@ -64,8 +62,7 @@ public class NoteEditActivity extends BaseActivity {
 	private static final int REQUEST_CODE_PICK_IMAGE = 1023;
 	private static final int REQUEST_CODE_CAPTURE_CAMEIA = 1022;
 
-	private static final File PHOTO_DIR = new File(
-			Environment.getExternalStorageDirectory() + "/DCIM/Camera");
+	private static final File PHOTO_DIR = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera");
 
 	private String mPageTitle;
 	
@@ -263,7 +260,7 @@ public class NoteEditActivity extends BaseActivity {
 
 		if (requestCode == REQUEST_CODE_PICK_IMAGE) {
 			Uri uri = data.getData();
-			insertBitmap(getRealFilePath(uri));
+			insertBitmap(FileUtils.getRealFilePath(this, uri));
 		} else if (requestCode == REQUEST_CODE_CAPTURE_CAMEIA) {
 			insertBitmap(mCurrentPhotoFile.getAbsolutePath());
 		}
@@ -276,36 +273,6 @@ public class NoteEditActivity extends BaseActivity {
 	 */
 	private void insertBitmap(String imagePath) {
 		mContentEditor.insertImage(imagePath);
-	}
-
-	/**
-	 * 根据Uri获取图片文件的绝对路径
-	 */
-	private String getRealFilePath(final Uri uri) {
-		if (null == uri) {
-			return null;
-		}
-
-		final String scheme = uri.getScheme();
-		String data = null;
-		if (scheme == null) {
-			data = uri.getPath();
-		} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
-			data = uri.getPath();
-		} else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
-			Cursor cursor = getContentResolver().query(uri,
-					new String[] { ImageColumns.DATA }, null, null, null);
-			if (null != cursor) {
-				if (cursor.moveToFirst()) {
-					int index = cursor.getColumnIndex(ImageColumns.DATA);
-					if (index > -1) {
-						data = cursor.getString(index);
-					}
-				}
-				cursor.close();
-			}
-		}
-		return data;
 	}
 
 	/** 转换编辑框内的所有内容为字符串 */

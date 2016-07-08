@@ -20,15 +20,10 @@ import android.os.Environment;
  */
 public class ImageUtils {
 
-	public static final float SCREEN_WIDTH_PERCENT = 0.73f; // 480以上手机用此百分比
-	public static final float SCREEN_WIDTH_PERCENT_SMALL_SCREEN = 0.68f; // 小屏
+	public static final float SCALE_NUM_75 = 0.75f;
+	public static final float SCREEN_WIDTH_PERCENT = 0.73f;
+	public static final float SCREEN_WIDTH_PERCENT_SMALL_SCREEN = 0.68f; 
 	public static final float STANDARD_WIDTH = 480;
-
-	public static final float SCALE_NUM_75 = 0.75f; // 图片缩放占屏比例
-
-	/**
-	 * 以 480*800的手机为标准，如果手机尺寸比较大，图片放大相应的比例。
-	 */
 	public static final int standardWidth = 400;
 
 	/**
@@ -44,8 +39,7 @@ public class ImageUtils {
 		File file = null;
 
 		try {
-			path = Environment.getExternalStorageDirectory() + File.separator
-					+ System.currentTimeMillis() + ".jpg";
+			path = Environment.getExternalStorageDirectory() + File.separator + System.currentTimeMillis() + ".jpg";
 			DebugTraceTool.debugTraceE(ImageUtils.class.getName(), path);
 			file = new File(path);
 			fos = new FileOutputStream(file);
@@ -167,8 +161,7 @@ public class ImageUtils {
 
 		Matrix matrix = new Matrix();
 		matrix.postScale(scale, scale);
-		Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-				bitmap.getHeight(), matrix, true);
+		Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 		return resizeBmp;
 	}
 }
