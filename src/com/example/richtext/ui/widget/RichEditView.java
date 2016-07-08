@@ -109,7 +109,7 @@ public class RichEditView extends LinearLayout {
 					}
 
 					options.inJustDecodeBounds = false;
-					img = changeBitmap(BitmapFactory.decodeFile(fs, options));
+					img = resizeBitmap(BitmapFactory.decodeFile(fs, options));
 					inSertImage(img, i, j);
 				}
 			}
@@ -162,13 +162,8 @@ public class RichEditView extends LinearLayout {
 		return ss;
 	}
 
-	/**
-	 * 编辑界面的图片放大规则
-	 * 
-	 * @param bitmap
-	 * @return
-	 */
-	public Bitmap changeBitmap(Bitmap bitmap) {
+	/** 编辑界面的图片调整 */
+	public Bitmap resizeBitmap(Bitmap bitmap) {
 		if (bitmap == null) {
 			return null;
 		}
