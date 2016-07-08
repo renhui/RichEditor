@@ -248,7 +248,7 @@ public class NoteEditActivity extends BaseActivity {
 	private String getPhotoFileName() {
 		Date date = new Date(System.currentTimeMillis());
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"'IMG'_yyyy-MM-dd HH:mm:ss");
+				"'IMG'_yyyy_MM_dd_HH_mm_ss");
 		return dateFormat.format(date) + ".jpg";
 	}
 

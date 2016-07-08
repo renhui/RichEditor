@@ -8,6 +8,7 @@ import com.example.richtext.R;
 import com.example.richtext.moudle.Note;
 import com.example.richtext.sqlite.DatabaseAccessFactory;
 import com.example.richtext.ui.widget.RichEditView;
+import com.example.richtext.utils.DebugTraceTool;
 import com.example.richtext.utils.FileUtils;
 import com.example.richtext.utils.ImageUtils;
 import com.example.richtext.utils.ToastUtils;
@@ -126,6 +127,7 @@ public class NoteReEditActivity extends Activity implements View.OnClickListener
 			Uri uri = data.getData();
 			setImageView(FileUtils.getRealFilePath(this, uri));
 		} else if (requestCode == REQUEST_CODE_CAPTURE_CAMEIA) {
+			DebugTraceTool.debugTraceE(this, mCurrentPhotoFile.getAbsolutePath());
 			setImageView(mCurrentPhotoFile.getAbsolutePath());
 		}
 	}
@@ -186,7 +188,7 @@ public class NoteReEditActivity extends Activity implements View.OnClickListener
 	@SuppressLint("SimpleDateFormat")
 	private String getPhotoFileName() {
 		Date date = new Date(System.currentTimeMillis());
-		SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyy_MM_dd_HH_mm_ss");
 		return dateFormat.format(date) + ".jpg";
 	}
 
@@ -216,6 +218,8 @@ public class NoteReEditActivity extends Activity implements View.OnClickListener
 					ToastUtils.show(R.string.content_empty);
 					return;
 				}
+				
+				DebugTraceTool.debugTraceE(this, content);
 
 				// 目前不做编辑覆盖数据库的操作 --- 采用插入操作 // TODO 后续做更新数据库操作
 				Note note = new Note();
