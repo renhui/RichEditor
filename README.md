@@ -7,14 +7,8 @@ RichEditor
 <b>v1.0.50   完成了基本的富文本编辑器的编辑存储框架。</b> <br>
 <b>v1.0.88   完成了再编辑的功能</b>
 
- 如果有问题可以在Issue里面留言. 如果觉得有用的话，可以Star一下。
-
-以ScrollView为主的编辑器（只能用于首次编辑）：<br>
-![renhui](https://github.com/renhui/RichEditor/blob/master/screenshot/device-2016-03-10-145401.png)
-<br>
-以EditText为主的编辑器（支持再编辑）<br>
-![renhui](https://github.com/renhui/RichEditor/blob/master/screenshot/device-2016-03-10-145788.png)
-
+以ScrollView为主的编辑控件（只能用于首次编辑）：<br>
+以EditText为主的编辑控件（支持再编辑）<br>
 
 
 
