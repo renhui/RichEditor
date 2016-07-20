@@ -11,8 +11,8 @@ RichEditor
 Core features are: photo-text display, supporting photo-text content edit, save, display and re-edit. Content is stored in HTML format.
 If only the first editing functions, you can use RichEditor to edit (using ScrollView rich container), if you need to edit function, we recommend using RichEditView (using Edittext + LinearLayout). .
 
-v1.0.50 finished editing storage framework basic rich text editor.<br>
-v1.0.88 complete re-editing features to edit ScrollView-based control (only for the first time editing):
+<b>v1.0.50 finished editing storage framework basic rich text editor.<br>
+v1.0.88 complete re-editing features to edit ScrollView-based control </b>(only for the first time editing):
 In EditText based edit control (support the re-edit)
 
 
