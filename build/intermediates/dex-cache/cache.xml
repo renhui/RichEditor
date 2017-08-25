@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/renhui/opensource/RichEditor/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="dd1712a681d9a38265ad50224872a3d3a3d49d34">
+        <dex dex="/Users/renhui/opensource/RichEditor/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_f94168190d10ad2caca6d480b6a93bbd4c5eaa03/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/renhui/opensource/RichEditor/app/libs/photo-view.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="6fc804d5a7d2b280cf5fd48d6dc3d50bff4e0cc7">
+        <dex dex="/Users/renhui/opensource/RichEditor/app/build/intermediates/transforms/dex/debug/folders/1000/2/photo-view_03e037b89947278eee757a78dab06efdfbf28835/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/renhui/opensource/RichEditor/app/libs/common-lang3.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="70d0d4ddef60cfa67f28fd3382fc631119380030">
+        <dex dex="/Users/renhui/opensource/RichEditor/app/build/intermediates/transforms/dex/debug/folders/1000/2/common-lang3_db7b550bdf8dcc1b58d558f0ce4c486e7df8cee5/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/renhui/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.1/support-annotations-23.1.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="/Users/renhui/opensource/RichEditor/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-23.1.1_a016fab80fcc5ff34ccaa33f22ebef36538027b2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/renhui/opensource/RichEditor/app/libs/umeng-analytics-v5.6.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="b2705cbb19f52bb4d242458163a98d9e889c1292">
+        <dex dex="/Users/renhui/opensource/RichEditor/app/build/intermediates/transforms/dex/debug/folders/1000/2/umeng-analytics-v5.6.1_2dbba7ecdc94ab3142311154b78544035875eee8/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/renhui/opensource/RichEditor/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="/Users/renhui/opensource/RichEditor/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_55489d5efce305b225d5378972e1ab06ffeef356/classes.dex" />
+    </item>
+
+</items>
