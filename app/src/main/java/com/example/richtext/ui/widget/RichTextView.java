@@ -5,10 +5,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.example.richtext.R;
-import com.imageloader.core.DisplayImageOptions;
-import com.imageloader.core.ImageLoader;
-import com.imageloader.core.assist.ImageScaleType;
-import com.imageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
 
 import android.content.Context;
 import android.graphics.Bitmap;

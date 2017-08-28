@@ -9,10 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.example.richtext.R;
-import com.imageloader.core.DisplayImageOptions;
-import com.imageloader.core.ImageLoader;
-import com.imageloader.core.assist.ImageScaleType;
-import com.imageloader.core.assist.ImageSize;
 import com.example.richtext.moudle.EditData;
 import com.example.richtext.moudle.Note;
 import com.example.richtext.sqlite.DatabaseAccessFactory;
@@ -24,6 +20,10 @@ import com.example.richtext.utils.FileUtils;
 import com.example.richtext.utils.ImageUtils;
 import com.example.richtext.utils.LongBlogContent;
 import com.example.richtext.utils.ToastUtils;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;

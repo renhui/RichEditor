@@ -3,8 +3,8 @@ package com.example.richtext.ui.widget;
 import java.util.ArrayList;
 import java.util.List;
 import com.example.richtext.R;
-import com.imageloader.core.ImageLoader;
 import com.example.richtext.moudle.EditData;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.animation.LayoutTransition;
 import android.animation.LayoutTransition.TransitionListener;

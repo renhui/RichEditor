@@ -27,4 +27,5 @@ dependencies {
     compile files('libs/common-lang3.jar')
     compile files('libs/photo-view.jar')
     compile files('libs/umeng-analytics-v5.6.1.jar')
+    compile files('libs/universal-image-loader-1.9.5.jar')
 }
