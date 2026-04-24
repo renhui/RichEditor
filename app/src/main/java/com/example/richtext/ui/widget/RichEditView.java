@@ -6,11 +6,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.bumptech.glide.Glide;
 import com.example.richtext.R;
 import com.example.richtext.utils.ImageUtils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spannable;
@@ -88,33 +90,54 @@ public class RichEditView extends LinearLayout {
 				}
 
 				Bitmap img = null;
-				String fs = "";
-
-				// 判断路径是否是完整的本地路径
-				if (mImageArray.valueAt(i).valueAt(j) != null && mImageArray.valueAt(i).valueAt(j).startsWith("/storage")) {
-					fs = mImageArray.valueAt(i).valueAt(j);
+				String imageSrc = mImageArray.valueAt(i).valueAt(j);
+				Object model = toImageModel(imageSrc);
+				if (model == null) {
+					continue;
 				}
-				File file = new File(fs);
-
-				if (file.exists()) {
-					BitmapFactory.Options options = new BitmapFactory.Options();
-					options.inJustDecodeBounds = true;
-					BitmapFactory.decodeFile(fs, options);
-					if (phone_width > 480) {
-						int inSampleSize = ImageUtils.reckonInSampleSizeForBig(options, (int) (phone_width * 0.85));
-						options.inSampleSize = inSampleSize;
-					} else {
-						int inSampleSize = ImageUtils.reckonInSampleSizeForSmall(options, (int) (phone_width * 0.85));
-						options.inSampleSize = inSampleSize;
+				try {
+					img = Glide.with(mContext)
+							.asBitmap()
+							.load(model)
+							.submit((int) (phone_width * 0.85f), Integer.MAX_VALUE)
+							.get();
+				} catch (Exception ignored) {
+					if (imageSrc != null && imageSrc.startsWith("/")) {
+						BitmapFactory.Options options = new BitmapFactory.Options();
+						options.inJustDecodeBounds = true;
+						BitmapFactory.decodeFile(imageSrc, options);
+						if (phone_width > 480) {
+							int inSampleSize = ImageUtils.reckonInSampleSizeForBig(options, (int) (phone_width * 0.85));
+							options.inSampleSize = inSampleSize;
+						} else {
+							int inSampleSize = ImageUtils.reckonInSampleSizeForSmall(options, (int) (phone_width * 0.85));
+							options.inSampleSize = inSampleSize;
+						}
+						options.inJustDecodeBounds = false;
+						img = BitmapFactory.decodeFile(imageSrc, options);
 					}
-
-					options.inJustDecodeBounds = false;
-					img = resizeBitmap(BitmapFactory.decodeFile(fs, options));
-					inSertImage(img, i, j);
+				}
+				if (img != null) {
+					inSertImage(resizeBitmap(img), i, j);
 				}
 			}
 		}
 		this.addView(mEditText);
+	}
+
+	private Object toImageModel(String imageSrc) {
+		if (imageSrc == null || imageSrc.isEmpty()) {
+			return null;
+		}
+		if (imageSrc.startsWith("content://") || imageSrc.startsWith("file://")
+				|| imageSrc.startsWith("http://") || imageSrc.startsWith("https://")) {
+			return Uri.parse(imageSrc);
+		}
+		File file = new File(imageSrc);
+		if (file.exists()) {
+			return file;
+		}
+		return null;
 	}
 
 	public void inSertImage(Bitmap img, int i, int j) {

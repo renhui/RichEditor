@@ -4,6 +4,14 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.richtext.R;
 import com.example.richtext.moudle.Note;
 import com.example.richtext.sqlite.DatabaseAccessFactory;
@@ -19,10 +27,9 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.Html;
@@ -30,6 +37,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,6 +45,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 /** 再编辑便签界面  
  * 
@@ -44,10 +55,9 @@ import android.widget.TextView;
  */
 public class NoteReEditActivity extends Activity implements View.OnClickListener {
 
+	private static final String IMAGE_DEBUG_TAG = "RichEditorImageDiag";
 	private static final int REQUEST_CODE_PICK_IMAGE = 1023;
 	private static final int REQUEST_CODE_CAPTURE_CAMEIA = 1022;
-	private static final File PHOTO_DIR = new File(
-			Environment.getExternalStorageDirectory() + "/DCIM/Camera");
 
 	private static int SELECTED_INDEX = 0;
 
@@ -55,6 +65,7 @@ public class NoteReEditActivity extends Activity implements View.OnClickListener
 
 	private String mNoteTitle;
 	private String mNoteContent;
+	private String mNoteNativeId;
 
 	private EditText mTitleEditor;
 	private LinearLayout mContentEditor;
@@ -68,6 +79,7 @@ public class NoteReEditActivity extends Activity implements View.OnClickListener
 
 		mNoteTitle = getIntent().getStringExtra("note_title");
 		mNoteContent = getIntent().getStringExtra("note_content");
+		mNoteNativeId = getIntent().getStringExtra("note_native_id");
 
 		setContentView(R.layout.activity_note_reedit);
 		mTitleEditor = (EditText) findViewById(R.id.note_title);
@@ -124,63 +136,162 @@ public class NoteReEditActivity extends Activity implements View.OnClickListener
 		}
 
 		if (requestCode == REQUEST_CODE_PICK_IMAGE) {
+			if (data == null || data.getData() == null) {
+				ToastUtils.show("获取图片失败");
+				Log.e(IMAGE_DEBUG_TAG, "onActivityResult PICK failed: data or uri is null");
+				return;
+			}
 			Uri uri = data.getData();
-			setImageView(FileUtils.getRealFilePath(this, uri));
+			String imagePath = FileUtils.getUsableImagePath(this, uri);
+			Log.d(IMAGE_DEBUG_TAG, "PICK result uri=" + uri + ", realPath=" + imagePath);
+			setImageView(imagePath);
 		} else if (requestCode == REQUEST_CODE_CAPTURE_CAMEIA) {
+			if (mCurrentPhotoFile == null) {
+				ToastUtils.show("获取图片失败");
+				Log.e(IMAGE_DEBUG_TAG, "onActivityResult CAMERA failed: mCurrentPhotoFile is null");
+				return;
+			}
 			DebugTraceTool.debugTraceE(this, mCurrentPhotoFile.getAbsolutePath());
+			Log.d(IMAGE_DEBUG_TAG, "CAMERA result file=" + mCurrentPhotoFile.getAbsolutePath()
+					+ ", exists=" + mCurrentPhotoFile.exists() + ", length=" + mCurrentPhotoFile.length());
 			setImageView(mCurrentPhotoFile.getAbsolutePath());
 		}
 	}
 
 	private void setImageView(String imageUrl) {
-		if (!TextUtils.isEmpty(imageUrl) && !"del".equals(imageUrl)) {
-			final int phone_width = getResources().getDisplayMetrics().widthPixels;
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inJustDecodeBounds = true;
-			BitmapFactory.decodeFile(imageUrl, options);
-			if (phone_width > 480) {
-				int inSampleSize = ImageUtils.reckonInSampleSizeForBig(options, (int) (phone_width * 0.75));
-				options.inSampleSize = inSampleSize;
-			} else {
-				int inSampleSize = ImageUtils.reckonInSampleSizeForSmall(options, (int) (phone_width * 0.75));
-				options.inSampleSize = inSampleSize;
-			}
+		if (TextUtils.isEmpty(imageUrl) || "del".equals(imageUrl)) {
+			Log.e(IMAGE_DEBUG_TAG, "setImageView skip: invalid imageUrl=" + imageUrl);
+			return;
+		}
+		final int phoneWidth = getResources().getDisplayMetrics().widthPixels;
+		final int targetWidth = (int) (phoneWidth * 0.75f);
+		final Object model = toGlideModel(imageUrl);
+		if (model == null) {
+			ToastUtils.show("图片地址无效");
+			Log.e(IMAGE_DEBUG_TAG, "setImageView failed: Glide model is null, imageUrl=" + imageUrl);
+			return;
+		}
+		Log.d(IMAGE_DEBUG_TAG, "setImageView start, imageUrl=" + imageUrl + ", model=" + describeModel(model)
+				+ ", targetWidth=" + targetWidth);
+		Glide.with(this)
+				.asBitmap()
+				.load(model)
+				.diskCacheStrategy(DiskCacheStrategy.ALL)
+				.override(targetWidth, Target.SIZE_ORIGINAL)
+				.listener(new RequestListener<Bitmap>() {
+					@Override
+					public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+						Log.e(IMAGE_DEBUG_TAG, "Glide load failed. model=" + model + ", firstResource=" + isFirstResource);
+						if (e != null) {
+							Log.e(IMAGE_DEBUG_TAG, "Glide root causes:\n" + e.getRootCauses());
+							Log.e(IMAGE_DEBUG_TAG, "Glide stacktrace", e);
+						}
+						return false;
+					}
 
-			options.inJustDecodeBounds = false;
-			Bitmap img = BitmapFactory.decodeFile(imageUrl, options);
-			ImageSpan urlSpan = new ImageSpan(ImageUtils.convert(this, img), imageUrl);
-			SpannableString string = new SpannableString(" ");
-			string.setSpan(urlSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					@Override
+					public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+						Log.d(IMAGE_DEBUG_TAG, "Glide load success. size=" + resource.getWidth() + "x"
+								+ resource.getHeight() + ", dataSource=" + dataSource + ", model=" + model);
+						return false;
+					}
+				})
+				.into(new CustomTarget<Bitmap>() {
+					@Override
+					public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+						insertImageSpan(resource, imageUrl);
+					}
 
-			Editable editable = mEditView.getEditableText();
-			if (SELECTED_INDEX == 0) {
-				editable.insert(SELECTED_INDEX, Html.fromHtml("<br>"));
-				editable.insert(SELECTED_INDEX, string);
-			} else if (SELECTED_INDEX == editable.length() && SELECTED_INDEX != 0) {
-				editable.insert(SELECTED_INDEX, string);
-				editable.insert(SELECTED_INDEX, Html.fromHtml("<br>"));
-			} else {
-				editable.insert(SELECTED_INDEX, Html.fromHtml("<br>"));
-				editable.insert(SELECTED_INDEX, string);
-				editable.insert(SELECTED_INDEX, Html.fromHtml("<br>"));
-			}
+					@Override
+					public void onLoadCleared(@Nullable Drawable placeholder) {
+						// no-op
+					}
+
+					@Override
+					public void onLoadFailed(@Nullable Drawable errorDrawable) {
+						super.onLoadFailed(errorDrawable);
+						ToastUtils.show("图片解码失败");
+						Log.e(IMAGE_DEBUG_TAG, "CustomTarget onLoadFailed, imageUrl=" + imageUrl
+								+ ", model=" + describeModel(model));
+					}
+				});
+	}
+
+	private Object toGlideModel(String imageUrl) {
+		if (TextUtils.isEmpty(imageUrl)) {
+			return null;
+		}
+		if (imageUrl.startsWith("content://") || imageUrl.startsWith("file://")) {
+			return Uri.parse(imageUrl);
+		}
+		File file = new File(imageUrl);
+		if (file.exists()) {
+			return file;
+		}
+		return imageUrl;
+	}
+
+	private String describeModel(Object model) {
+		if (model instanceof File) {
+			File file = (File) model;
+			return "File(path=" + file.getAbsolutePath() + ", exists=" + file.exists()
+					+ ", canRead=" + file.canRead() + ", length=" + file.length() + ")";
+		}
+		if (model instanceof Uri) {
+			Uri uri = (Uri) model;
+			return "Uri(" + uri.toString() + ")";
+		}
+		return model.getClass().getSimpleName() + "(" + model + ")";
+	}
+
+	private void insertImageSpan(Bitmap img, String imageUrl) {
+		ImageSpan urlSpan = new ImageSpan(ImageUtils.convert(this, img), imageUrl);
+		SpannableString string = new SpannableString(" ");
+		string.setSpan(urlSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+		Editable editable = mEditView.getEditableText();
+		if (SELECTED_INDEX == 0) {
+			editable.insert(SELECTED_INDEX, Html.fromHtml("<br>"));
+			editable.insert(SELECTED_INDEX, string);
+		} else if (SELECTED_INDEX == editable.length() && SELECTED_INDEX != 0) {
+			editable.insert(SELECTED_INDEX, string);
+			editable.insert(SELECTED_INDEX, Html.fromHtml("<br>"));
+		} else {
+			editable.insert(SELECTED_INDEX, Html.fromHtml("<br>"));
+			editable.insert(SELECTED_INDEX, string);
+			editable.insert(SELECTED_INDEX, Html.fromHtml("<br>"));
 		}
 	}
 
-	public static Intent getTakePickIntent(File f) {
+	public Intent getTakePickIntent(File f) {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE, null);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+		Uri outputUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", f);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
+		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		return intent;
 	}
 
 	protected void openCamera() {
 		try {
-			PHOTO_DIR.mkdirs();// 创建照片的存储目录
-			mCurrentPhotoFile = new File(PHOTO_DIR, getPhotoFileName());// 给新照的照片文件命名
+			File photoDir = getExternalFilesDir(android.os.Environment.DIRECTORY_PICTURES);
+			if (photoDir == null) {
+				ToastUtils.show("无法创建相机目录");
+				Log.e(IMAGE_DEBUG_TAG, "openCamera failed: external files dir is null");
+				return;
+			}
+			if (!photoDir.exists() && !photoDir.mkdirs()) {
+				ToastUtils.show("无法创建相机目录");
+				Log.e(IMAGE_DEBUG_TAG, "openCamera failed: mkdirs failed, path=" + photoDir.getAbsolutePath());
+				return;
+			}
+			mCurrentPhotoFile = new File(photoDir, getPhotoFileName());// 给新照的照片文件命名
+			Log.d(IMAGE_DEBUG_TAG, "openCamera output file=" + mCurrentPhotoFile.getAbsolutePath());
 			final Intent intent = getTakePickIntent(mCurrentPhotoFile);
 			startActivityForResult(intent, REQUEST_CODE_CAPTURE_CAMEIA);
 		} catch (ActivityNotFoundException e) {
-			e.printStackTrace();
+			Log.e(IMAGE_DEBUG_TAG, "openCamera ActivityNotFoundException", e);
+		} catch (Exception e) {
+			Log.e(IMAGE_DEBUG_TAG, "openCamera exception", e);
 		}
 	}
 
@@ -221,14 +332,19 @@ public class NoteReEditActivity extends Activity implements View.OnClickListener
 				
 				DebugTraceTool.debugTraceE(this, content);
 
-				// 目前不做编辑覆盖数据库的操作 --- 采用插入操作 // TODO 后续做更新数据库操作
 				Note note = new Note();
-				note.nativeId = String.valueOf(System.currentTimeMillis());
+				note.nativeId = mNoteNativeId;
 				note.title = title;
 				note.content = content;
-				note.createTime = System.currentTimeMillis();
 				note.modifyTime = System.currentTimeMillis();
-				DatabaseAccessFactory.getInstance(NoteReEditActivity.this).noteAccessor().insert(note);
+				boolean updated = DatabaseAccessFactory.getInstance(NoteReEditActivity.this)
+						.noteAccessor()
+						.updateByNativeId(note);
+				if (!updated) {
+					note.nativeId = String.valueOf(System.currentTimeMillis());
+					note.createTime = System.currentTimeMillis();
+					DatabaseAccessFactory.getInstance(NoteReEditActivity.this).noteAccessor().insert(note);
+				}
 
 				ToastUtils.show(R.string.note_saved);
 				// 跳转

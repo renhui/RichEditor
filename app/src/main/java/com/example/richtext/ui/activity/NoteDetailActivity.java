@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class NoteDetailActivity extends BaseActivity {
+	private String mNoteNativeId;
 	private String mNoteTitle;
 	private String mNoteContent;
 	private ActionBar mActionBar;
@@ -28,6 +29,7 @@ public class NoteDetailActivity extends BaseActivity {
 		setContentView(R.layout.activity_note_detail);
 
 		Intent intent = getIntent();
+		mNoteNativeId = intent.getStringExtra("note_native_id");
 		mNoteTitle = intent.getStringExtra("note_title");
 		mNoteContent = intent.getStringExtra("note_content");
 
@@ -52,7 +54,7 @@ public class NoteDetailActivity extends BaseActivity {
 		mActionBarTitle.setMaxLines(2);
 		mActionBarTitle.setEllipsize(TruncateAt.END);
 		mActionBarTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
-		mActionBarTitle.setTextColor(getResources().getColor(R.color.pink));
+		mActionBarTitle.setTextColor(getResources().getColor(R.color.ui_text_primary));
 		mActionBarTitle.setGravity(Gravity.CENTER_VERTICAL);
 		mActionBarTitle.setClickable(true);
 		mActionBarTitle.setPadding(5, 0, 32, 0);
@@ -77,6 +79,7 @@ public class NoteDetailActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(NoteDetailActivity.this, NoteReEditActivity.class);
+				intent.putExtra("note_native_id", mNoteNativeId);
 				intent.putExtra("note_title", mNoteTitle);
 				intent.putExtra("note_content", mNoteContent);
 				startActivity(intent);

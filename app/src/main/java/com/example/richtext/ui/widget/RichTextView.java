@@ -4,15 +4,15 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.richtext.R;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.ImageSize;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.text.Html;
 import android.util.SparseArray;
 import android.view.Gravity;
@@ -117,24 +117,47 @@ public class RichTextView extends LinearLayout {
 	}
 
 	private void showImage(int phone_width, final String uriStr, final ImageView image) {
-		if(isFileExist(uriStr)) {
-			// 需要准确的计算图片的大小问题
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inJustDecodeBounds = true;
-			BitmapFactory.decodeFile(uriStr, options);
-			float mult = (float) options.outWidth / (float) phone_width;
-			LinearLayout.LayoutParams imageParam = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			image.setLayoutParams(imageParam);
-			DisplayImageOptions opts = new DisplayImageOptions.Builder()
-					.imageScaleType(ImageScaleType.EXACTLY)
-					.resetViewBeforeLoading(false).build();
-			Bitmap bitmap = ImageLoader.getInstance().loadImageSync(
-					"file:/" + uriStr, new ImageSize((int) (phone_width * 0.95f), (int)((float)options.outHeight / mult * 0.95f) ), opts);
-			image.setImageBitmap(bitmap);
-			image.invalidate();
-		} else {
-			// 各位可以根据自己的需要做其他的图片加载逻辑 
+		Object model = buildGlideModel(uriStr);
+		if (model == null) {
+			return;
 		}
+		Glide.with(mContext)
+				.asBitmap()
+				.load(model)
+				.into(new CustomTarget<Bitmap>() {
+					@Override
+					public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
+						if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+							return;
+						}
+						int targetWidth = (int) (phone_width * 0.95f);
+						int targetHeight = targetWidth * bitmap.getHeight() / bitmap.getWidth();
+						LinearLayout.LayoutParams imageParam =
+								new LayoutParams(targetWidth, targetHeight);
+						image.setLayoutParams(imageParam);
+						image.setImageBitmap(bitmap);
+						image.invalidate();
+					}
+
+					@Override
+					public void onLoadCleared(Drawable placeholder) {
+						// no-op
+					}
+				});
+	}
+
+	private Object buildGlideModel(String uriStr) {
+		if (uriStr == null || uriStr.isEmpty()) {
+			return null;
+		}
+		if (uriStr.startsWith("content://") || uriStr.startsWith("file://")
+				|| uriStr.startsWith("http://") || uriStr.startsWith("https://")) {
+			return Uri.parse(uriStr);
+		}
+		if (isFileExist(uriStr)) {
+			return new File(uriStr);
+		}
+		return null;
 	}
 
 	// 添加文本内容

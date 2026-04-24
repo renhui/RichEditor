@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.bumptech.glide.Glide;
 import com.example.richtext.R;
 import com.example.richtext.moudle.EditData;
 import com.example.richtext.moudle.Note;
@@ -20,10 +21,6 @@ import com.example.richtext.utils.FileUtils;
 import com.example.richtext.utils.ImageUtils;
 import com.example.richtext.utils.LongBlogContent;
 import com.example.richtext.utils.ToastUtils;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.ImageSize;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -48,6 +45,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import androidx.core.content.FileProvider;
 
 /**
  * 编辑Note页面
@@ -151,7 +149,7 @@ public class NoteEditActivity extends BaseActivity {
 		mActionBarTitle.setMaxLines(2);
 		mActionBarTitle.setEllipsize(TruncateAt.END);
 		mActionBarTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
-		mActionBarTitle.setTextColor(getResources().getColor(R.color.pink));
+		mActionBarTitle.setTextColor(getResources().getColor(R.color.ui_text_primary));
 		mActionBarTitle.setGravity(Gravity.CENTER_VERTICAL);
 		mActionBarTitle.setClickable(true);
 		mActionBarTitle.setPadding(5, 0, 32, 0);
@@ -238,9 +236,11 @@ public class NoteEditActivity extends BaseActivity {
 		}
 	}
 
-	public static Intent getTakePickIntent(File f) {
+	public Intent getTakePickIntent(File f) {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE, null);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+		Uri outputUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", f);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
+		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		return intent;
 	}
 
@@ -259,9 +259,22 @@ public class NoteEditActivity extends BaseActivity {
 		}
 
 		if (requestCode == REQUEST_CODE_PICK_IMAGE) {
+			if (data == null || data.getData() == null) {
+				ToastUtils.show("获取图片失败");
+				return;
+			}
 			Uri uri = data.getData();
-			insertBitmap(FileUtils.getRealFilePath(this, uri));
+			String imagePath = FileUtils.getUsableImagePath(this, uri);
+			if (TextUtils.isEmpty(imagePath)) {
+				ToastUtils.show("图片解析失败");
+				return;
+			}
+			insertBitmap(imagePath);
 		} else if (requestCode == REQUEST_CODE_CAPTURE_CAMEIA) {
+			if (mCurrentPhotoFile == null) {
+				ToastUtils.show("获取图片失败");
+				return;
+			}
 			insertBitmap(mCurrentPhotoFile.getAbsolutePath());
 		}
 	}
@@ -272,6 +285,10 @@ public class NoteEditActivity extends BaseActivity {
 	 * @param imagePath
 	 */
 	private void insertBitmap(String imagePath) {
+		if (TextUtils.isEmpty(imagePath)) {
+			ToastUtils.show("图片路径无效");
+			return;
+		}
 		mContentEditor.insertImage(imagePath);
 	}
 
@@ -356,17 +373,27 @@ public class NoteEditActivity extends BaseActivity {
 					canvas.drawText(ss[i], x, y, paint);
 					y = y + 35;
 				}
-				canvas.save(Canvas.ALL_SAVE_FLAG);
+				canvas.save();
 			} else if (itemData.imagePath != null) {
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inJustDecodeBounds = true;
 				BitmapFactory.decodeFile(itemData.imagePath, options);
-				DisplayImageOptions opt = new DisplayImageOptions.Builder()
-						.imageScaleType(ImageScaleType.EXACTLY).build();
-				Bitmap b = ImageLoader.getInstance().loadImageSync("file://" + itemData.imagePath,
-						new ImageSize(LONG_BLOG_WIDTH, (int) ((float) options.outHeight / ((float) options.outWidth / (float) LONG_BLOG_WIDTH))), opt);
+				int targetHeight = (int) ((float) options.outHeight / ((float) options.outWidth / (float) LONG_BLOG_WIDTH));
+				Bitmap b;
+				try {
+					b = Glide.with(NoteEditActivity.this)
+							.asBitmap()
+							.load(new File(itemData.imagePath))
+							.submit(LONG_BLOG_WIDTH, targetHeight)
+							.get();
+				} catch (Exception e) {
+					b = BitmapFactory.decodeFile(itemData.imagePath);
+				}
+				if (b == null) {
+					continue;
+				}
 				canvas.drawBitmap(b, 0, y, null);
-				canvas.save(Canvas.ALL_SAVE_FLAG);
+				canvas.save();
 				y += ((float) options.outHeight / ((float) options.outWidth / (float) LONG_BLOG_WIDTH)) + 35;
 			}
 		}
@@ -399,7 +426,9 @@ public class NoteEditActivity extends BaseActivity {
 
 		Intent shareIntent = new Intent(Intent.ACTION_SEND);
 		File file2 = new File(path);
-		shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file2));
+		Uri shareUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file2);
+		shareIntent.putExtra(Intent.EXTRA_STREAM, shareUri);
+		shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		shareIntent.setType("image/*");
 		startActivity(Intent.createChooser(shareIntent, "发布"));
 	}

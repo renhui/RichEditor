@@ -55,12 +55,29 @@ public class NoteAccessor extends TableAccessor {
 		long num = mDatabase.insert(Tables.mNoteTable, null, cv);
 		DebugTraceTool.debugTraceE(this, "insert number " + num);
 	}
+
+	/** 按nativeId更新便签 */
+	public synchronized boolean updateByNativeId(Note note) {
+		if (note == null || TextUtils.isEmpty(note.nativeId) || TextUtils.isEmpty(note.content)) {
+			DebugTraceTool.debugTraceE(this, "note/nativeId/content is null, can't update");
+			return false;
+		}
+		ContentValues cv = new ContentValues();
+		cv.put(Tables.mNoteTitle, note.title);
+		cv.put(Tables.mNoteContent, note.content);
+		cv.put(Tables.mNoteModifyTime, note.modifyTime);
+		int rows = mDatabase.update(Tables.mNoteTable, cv, Tables.mNoteNativeId + "=?",
+				new String[] { note.nativeId });
+		DebugTraceTool.debugTraceE(this, "update rows " + rows + ", nativeId=" + note.nativeId);
+		return rows > 0;
+	}
 	
 	
 	/** 查询所有的便签  */
 	public ArrayList<Note> getNotes() {
 		ArrayList<Note> list = new ArrayList<Note>();
-		Cursor cursor = mDatabase.query(Tables.mNoteTable, noteColumnList, null, null, null, null, Tables.mNoteModifyTime);
+		Cursor cursor = mDatabase.query(Tables.mNoteTable, noteColumnList, null, null, null, null,
+				Tables.mNoteModifyTime + " DESC");
 		if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
 			do {
 				list.add(getNote(cursor));

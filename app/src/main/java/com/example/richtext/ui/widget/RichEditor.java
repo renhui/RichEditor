@@ -2,9 +2,11 @@ package com.example.richtext.ui.widget;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
+
+import com.bumptech.glide.Glide;
 import com.example.richtext.R;
 import com.example.richtext.moudle.EditData;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.animation.LayoutTransition;
 import android.animation.LayoutTransition.TransitionListener;
@@ -15,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -214,7 +217,7 @@ public class RichEditor extends ScrollView {
 			EditText preEdit = (EditText) preView;
 			EditText nextEdit = (EditText) nextView;
 			String str1 = preEdit.getText().toString();
-			String str2 = preEdit.getText().toString();
+			String str2 = nextEdit.getText().toString();
 			String mergeText = "";
 			if (str2.length() > 0) {
 				mergeText = str1 + "\n" + str2;
@@ -250,7 +253,15 @@ public class RichEditor extends ScrollView {
 	
 	/** 富文本控件插入图片的对外接口  */
 	public void insertImage(String imagePath) {
+		if (TextUtils.isEmpty(imagePath)) {
+			Log.w("richEditor", "insertImage: imagePath is empty");
+			return;
+		}
 		Bitmap bmp = getScaledBitmap(imagePath, getWidth());
+		if (bmp == null) {
+			Log.w("richEditor", "insertImage: decode bitmap failed, path=" + imagePath);
+			return;
+		}
 		insertImage(bmp, imagePath);
 	}
 	
@@ -297,10 +308,14 @@ public class RichEditor extends ScrollView {
 	
 	/** 在指定的位置添加图片   */
 	private void addImageViewAtIndex(final int index, Bitmap bmp, String imagePath) {
+		if (bmp == null || bmp.getWidth() <= 0 || bmp.getHeight() <= 0) {
+			Log.w("richEditor", "addImageViewAtIndex: invalid bitmap");
+			return;
+		}
 		final RelativeLayout imageLayout = createImageLayout();
 		RichImageView imageView = (RichImageView) imageLayout.findViewById(R.id.edit_imageView);
 		imageView.setPicturePath(imagePath);
-		ImageLoader.getInstance().displayImage("file://" + imagePath, imageView);
+		Glide.with(getContext()).load(new File(imagePath)).into(imageView);
 		int imageHeight = getWidth() * bmp.getHeight() / bmp.getWidth();
 		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, imageHeight);
 		imageView.setLayoutParams(lp);

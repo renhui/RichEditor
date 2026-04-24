@@ -4,8 +4,6 @@ import android.app.Application;
 import android.os.Handler;
 
 import com.example.richtext.utils.DebugTraceTool;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class MyApplication extends Application {
 
@@ -18,10 +16,6 @@ public class MyApplication extends Application {
         mInstance = this;
         mHandler = new Handler();
         DebugTraceTool.debugTraceE(this, "application onCreate");
-
-        // 初始化图片加载控件
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
-        ImageLoader.getInstance().init(config);
     }
 
     public static MyApplication getInstance() {

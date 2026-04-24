@@ -11,5 +11,14 @@
     <color name="blue_semi_transparent">#805677fc</color>
     <color name="blue_semi_transparent_pressed">#80738ffe</color>
     <color name="mix_edit_text_color">#212121</color>
+    <color name="ui_page_bg">#F3F5F8</color>
+    <color name="ui_surface">#FFFFFF</color>
+    <color name="ui_text_primary">#1F2937</color>
+    <color name="ui_text_secondary">#6B7280</color>
+    <color name="ui_accent">#4F46E5</color>
+    <color name="ui_accent_pressed">#4338CA</color>
+    <color name="ui_divider">#E5E7EB</color>
+    <color name="ui_toolbar_bg">#FFFFFF</color>
+    <color name="ui_toolbar_icon_bg">#EEF2FF</color>
 
 </resources>
