@@ -1,91 +1,43 @@
-# RichEditor
+# RichEditor（Markdown First）
 
-一个面向 Android 的图文混排编辑 Demo，聚焦“便签内容从创建到再编辑”的完整闭环。  
-项目既可以作为富文本编辑器实现参考，也可以复用其中的核心控件到业务 App 中。
+Android 端 Markdown 便签重构项目，已完成 D0-D9 的主线改造（AI 协作模式）。
 
-## 产品定位
+## 当前状态
 
-本项目当前更适合定位为：
+- 架构：`app + core/* + data/* + feature/*`
+- UI：Jetpack Compose + Material 3（单 Activity 导航）
+- 数据：Room + FTS 搜索 + Flow 订阅
+- 编辑器：Edit / Preview / Split 三模式，自动保存、防抖、撤销重做
+- 渲染：Markwon Markdown 渲染管线
+- 媒体：图片导入、资产入库、`note://asset/<id>` 解析
+- 设置：DataStore（主题、字号、自动保存）
+- 回收站：删除、还原、彻底删除
 
-- 本地图文便签的 **富文本能力验证项目（POC / Demo）**
-- Android 原生图文混排编辑的 **实现样例库**
-- 需要“可再编辑”能力时的 **控件组合参考**
+## 文档索引
 
-它不是一个即插即用的通用 SDK，也不是面向多人协作/云端同步的完整笔记产品。
+- 设计总文档：`doc/REFACTOR_DESIGN.md`
+- AI 路线图：`doc/dev/ROADMAP_D0_D9.md`
+- 阶段变更记录：`doc/dev/D0_CHANGELOG.md` ... `doc/dev/D8_CHANGELOG.md`
 
-## 核心能力
+## 本地运行
 
-- 图文混排编辑：支持文本与图片混排输入
-- 内容展示：支持将存储内容按图文结构渲染
-- 内容持久化：内容以 HTML 片段形式保存到本地数据库
-- 再编辑能力：可从已保存内容恢复到可编辑状态继续编辑
-- 扩展能力示例：支持拍照、相册选图、手写板插图、长图导出分享
+要求：
+- JDK 17
+- Android Studio 最新稳定版
 
-## 编辑器能力分层
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+./gradlew :app:assembleDebug
+```
 
-项目内有两个编辑控件，定位不同：
+## 测试命令
 
-- `RichEditor`（`ScrollView + 多子 View`）
-  - 编辑交互体验好，适合首次创建内容
-  - 通过拆分/合并 `EditText` 与图片容器实现图文混排
-  - 更偏“创建态编辑器”
+```bash
+./gradlew testDebugUnitTest
+./gradlew connectedDebugAndroidTest
+```
 
-- `RichEditView`（`EditText + ImageSpan`）
-  - 可把已存储 HTML 内容恢复成可编辑文本
-  - 支持再编辑并重新输出 HTML
-  - 更偏“回编态编辑器”
+## 说明
 
-## 产品流程（当前实现）
-
-1. `NoteActivity`：便签列表页（入口）
-2. `NoteEditActivity`：新建便签（首次编辑）
-3. `NoteDetailActivity`：便签详情（展示）
-4. `NoteReEditActivity`：便签再编辑（回编）
-
-形成“创建 -> 保存 -> 展示 -> 再编辑 -> 再保存”的闭环。
-
-## 数据与存储
-
-- 存储格式：HTML 文本（包含 `<img src="...">`）
-- 图片引用：以本地文件路径写入 `src`
-- 数据库：本地 SQLite（通过 `DatabaseAccessFactory` 和 `NoteAccessor` 访问）
-
-## 技术栈
-
-- Android（Java）
-- Gradle（Android Gradle Plugin `7.0.4`）
-- `universal-image-loader`
-- `photo-view`
-- 其他本地 jar 依赖（见 `app/libs`）
-
-## 快速运行
-
-1. 使用 Android Studio 打开项目根目录
-2. 等待 Gradle 同步完成
-3. 连接模拟器或真机
-4. 运行 `app` 模块
-
-## 适用场景
-
-- 需要在 Android 端实现轻量图文便签
-- 需要验证 HTML 存储 + 本地图片混排的可行性
-- 需要参考“首次编辑”和“再编辑”两种编辑模型的实现差异
-
-## 当前边界与注意事项
-
-- 以本地能力为主：无登录、无云同步、无多端协同
-- 图片路径依赖本地文件系统，跨设备迁移需要额外处理
-- 工程以示例为主，若用于生产环境建议补充：
-  - 权限与分区存储适配
-  - 异常恢复与崩溃保护
-  - 数据迁移与版本升级策略
-  - 自动化测试与性能优化
-
-## 版本说明（历史）
-
-- `v1.0.50`：完成基本富文本编辑与存储框架
-- `v1.0.88`：完成再编辑能力
-
-
-
-
+- 已删除旧富文本 Java 方案（`RichEditor` / `RichEditView` / `RichTextView` 等）及相关本地 jar 依赖。
+- 若需查看每阶段具体改动，请参考 `doc/dev/README.md`。
