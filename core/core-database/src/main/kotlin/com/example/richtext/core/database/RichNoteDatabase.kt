@@ -14,7 +14,7 @@ import com.example.richtext.core.database.model.NoteFtsEntity
         NoteAssetEntity::class,
         NoteFtsEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false,
 )
 abstract class RichNoteDatabase : RoomDatabase() {

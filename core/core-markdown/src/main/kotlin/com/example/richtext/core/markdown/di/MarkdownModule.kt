@@ -11,6 +11,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
+import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.ext.tasklist.TaskListPlugin
@@ -31,9 +32,10 @@ object MarkdownProviderModule {
             .usePlugin(StrikethroughPlugin.create())
             .usePlugin(TaskListPlugin.create(context))
             .usePlugin(TablePlugin.create(context))
-            .usePlugin(
-                object : AbstractMarkwonPlugin() {
-                    // D2 先支持 note:// 语义识别，D5 接入资产映射与图片加载。
+            .usePlugin(object : AbstractMarkwonPlugin() {
+                    override fun configureTheme(builder: MarkwonTheme.Builder) {
+                        builder.blockMargin(8)
+                    }
                 },
             )
             .build()

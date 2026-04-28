@@ -49,6 +49,26 @@ interface NoteDao {
     )
     fun searchActiveByPinnedThenUpdated(matchQuery: String): Flow<List<NoteEntity>>
 
+    @Query(
+        """
+        SELECT * FROM notes
+        WHERE deleted_at IS NULL
+          AND (title LIKE :likePattern ESCAPE '\' OR markdown LIKE :likePattern ESCAPE '\')
+        ORDER BY updated_at DESC
+        """,
+    )
+    fun searchActiveByUpdatedLike(likePattern: String): Flow<List<NoteEntity>>
+
+    @Query(
+        """
+        SELECT * FROM notes
+        WHERE deleted_at IS NULL
+          AND (title LIKE :likePattern ESCAPE '\' OR markdown LIKE :likePattern ESCAPE '\')
+        ORDER BY pinned DESC, updated_at DESC
+        """,
+    )
+    fun searchActiveByPinnedThenUpdatedLike(likePattern: String): Flow<List<NoteEntity>>
+
     @Query("SELECT * FROM notes WHERE id = :id LIMIT 1")
     fun observeById(id: String): Flow<NoteEntity?>
 
@@ -70,8 +90,8 @@ interface NoteDao {
     @Query("UPDATE notes SET deleted_at = NULL, updated_at = :updatedAt WHERE id = :id")
     suspend fun restore(id: String, updatedAt: Long)
 
-    @Query("UPDATE notes SET pinned = :pinned, updated_at = :updatedAt WHERE id = :id")
-    suspend fun updatePinned(id: String, pinned: Boolean, updatedAt: Long)
+    @Query("UPDATE notes SET pinned = :pinned WHERE id = :id")
+    suspend fun updatePinned(id: String, pinned: Boolean)
 
     @Query("DELETE FROM notes WHERE id = :id")
     suspend fun deleteById(id: String)

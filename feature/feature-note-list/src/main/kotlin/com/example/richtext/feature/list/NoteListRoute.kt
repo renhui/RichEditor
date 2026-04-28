@@ -188,6 +188,14 @@ fun NoteListRoute(
                                         TextButton(
                                             onClick = {
                                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                viewModel.togglePinned(note.id, !note.pinned)
+                                            },
+                                        ) {
+                                            Text(if (note.pinned) "取消置顶" else "置顶")
+                                        }
+                                        TextButton(
+                                            onClick = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                                 viewModel.deleteNote(note.id)
                                                 scope.launch {
                                                     val result = snackbarHostState.showSnackbar(

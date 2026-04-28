@@ -73,4 +73,10 @@ class NoteListViewModel @Inject constructor(
             noteRepository.restore(id)
         }
     }
+
+    fun togglePinned(id: String, pinned: Boolean) {
+        viewModelScope.launch {
+            noteRepository.setPinned(id = id, pinned = pinned)
+        }
+    }
 }

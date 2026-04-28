@@ -37,10 +37,19 @@ class RoomNoteRepository @Inject constructor(
                     NoteSort.PINNED_THEN_UPDATED -> noteDao.observeActiveByPinnedThenUpdated()
                 }
             } else {
-                val match = NoteSearchQueryFormatter.buildFtsMatchQuery(normalizedQuery)
-                when (selectedSort) {
-                    NoteSort.UPDATED_DESC -> noteDao.searchActiveByUpdated(match)
-                    NoteSort.PINNED_THEN_UPDATED -> noteDao.searchActiveByPinnedThenUpdated(match)
+                val useLikeFallback = NoteSearchQueryFormatter.shouldUseLikeFallback(normalizedQuery)
+                if (useLikeFallback) {
+                    val likePattern = NoteSearchQueryFormatter.buildLikePattern(normalizedQuery)
+                    when (selectedSort) {
+                        NoteSort.UPDATED_DESC -> noteDao.searchActiveByUpdatedLike(likePattern)
+                        NoteSort.PINNED_THEN_UPDATED -> noteDao.searchActiveByPinnedThenUpdatedLike(likePattern)
+                    }
+                } else {
+                    val match = NoteSearchQueryFormatter.buildFtsMatchQuery(normalizedQuery)
+                    when (selectedSort) {
+                        NoteSort.UPDATED_DESC -> noteDao.searchActiveByUpdated(match)
+                        NoteSort.PINNED_THEN_UPDATED -> noteDao.searchActiveByPinnedThenUpdated(match)
+                    }
                 }
             }
             upstream.map { list ->
@@ -71,7 +80,7 @@ class RoomNoteRepository @Inject constructor(
     }
 
     override suspend fun setPinned(id: String, pinned: Boolean) {
-        noteDao.updatePinned(id = id, pinned = pinned, updatedAt = System.currentTimeMillis())
+        noteDao.updatePinned(id = id, pinned = pinned)
     }
 
     override suspend fun ensureSeedData() {

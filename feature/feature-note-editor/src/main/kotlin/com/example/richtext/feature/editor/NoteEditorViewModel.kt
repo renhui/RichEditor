@@ -50,6 +50,7 @@ class NoteEditorViewModel @Inject constructor(
     private var isHydrating = true
     private var saveJob: Job? = null
     private var persistedDraft = EditorDraft(title = "", markdown = "")
+    private var currentPinned = false
 
     init {
         observeExistingNote()
@@ -65,6 +66,9 @@ class NoteEditorViewModel @Inject constructor(
 
         viewModelScope.launch {
             noteRepository.observeById(actualNoteId).collectLatest { note ->
+                if (note != null) {
+                    currentPinned = note.pinned
+                }
                 if (note != null && isHydrating) {
                     val title = note.title
                     val markdown = note.markdown
@@ -122,7 +126,7 @@ class NoteEditorViewModel @Inject constructor(
                     markdown = draft.markdown,
                     createdAt = createdAt,
                     updatedAt = now,
-                    pinned = false,
+                    pinned = currentPinned,
                     deletedAt = null,
                     coverImagePath = null,
                     wordCount = draft.markdown.length,
